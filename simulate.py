@@ -1,3 +1,5 @@
+#Henry Kuzma    
+
 import pybullet as p
 import time
 
