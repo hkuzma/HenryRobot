@@ -5,19 +5,25 @@ import pyrosim.pyrosim as pyrosim
 import numpy
 import random
 import matplotlib.pyplot as m
+import constants as c
+from simulation import SIMULATION
 
 
 
 
-RUNTIME = 1000
 
-amplitude = numpy.pi/4
-frequency = 20
-phaseOffset = 0
 
-amplitude2 = numpy.pi/2
-frequency2 = 10
-phaseOffset2 = 0
+sim = SIMULATION()
+sim.run()
+
+
+
+
+
+
+
+
+
 
 #find plane.urdf
 import pybullet_data
@@ -30,11 +36,11 @@ physicsClient = p.connect(p.GUI)
 p.setAdditionalSearchPath(pybullet_data.getDataPath())
 
 
-#p.configureDebugVisualizer(p.COV_ENABLE_GUI,0)
 
 
 #add gravity
-p.setGravity(0,0,-9.8)
+p.setGravity(c.GRAVITY_X,c.GRAVITY_Y,c.GRAVITY_Z)
+
 
 #add da floor
 planeId = p.loadURDF("plane.urdf")
@@ -49,20 +55,20 @@ p.loadSDF("world.sdf")
 #Prep for sensors
 pyrosim.Prepare_To_Simulate(robotId)
 
-backLegSensorValues = numpy.zeros(RUNTIME)
-frontLegSensorValues = numpy.zeros(RUNTIME)
+backLegSensorValues = numpy.zeros(c.RUNTIME)
+frontLegSensorValues = numpy.zeros(c.RUNTIME)
 
 
 
-frontMotorVector = numpy.linspace(0, 2 * numpy.pi, RUNTIME)
-front_target_angles = amplitude * numpy.sin(frequency*frontMotorVector + phaseOffset)
+frontMotorVector = numpy.linspace(c.NUMPY_START, c.NUMPY_STOP, c.RUNTIME)
+front_target_angles = c.amplitude * numpy.sin(c.frequency*frontMotorVector + c.phaseOffset)
 
 
-backMotorVector = numpy.linspace(0, 2 * numpy.pi, RUNTIME)
-back_target_angles = amplitude2 * numpy.sin(frequency2*backMotorVector + phaseOffset2)
+backMotorVector = numpy.linspace(c.NUMPY_START, c.NUMPY_STOP, c.RUNTIME)
+back_target_angles = c.amplitude2 * numpy.sin(c.frequency2*backMotorVector + c.phaseOffset2)
 
 
-for i in range(RUNTIME):
+for i in range(c.RUNTIME):
     
     
     #Interesting stuff
@@ -82,15 +88,15 @@ for i in range(RUNTIME):
                                 jointName = b"Torso_BackLeg",
                                 controlMode = p.POSITION_CONTROL,
                                 targetPosition = back_target_angles[i],
-                                maxForce = 30)
+                                maxForce = c.MAXFORCE)
     pyrosim.Set_Motor_For_Joint(bodyIndex = robotId, 
                                 jointName = b"Torso_FrontLeg",
                                 controlMode = p.POSITION_CONTROL,
                                 targetPosition = front_target_angles[i],
-                                maxForce = 30)
+                                maxForce = c.MAXFORCE)
 
 
-    time.sleep(1/60)
+    time.sleep(c.SLEEPTIME)
     #print(i)
     print(front_target_angles[i])
     
