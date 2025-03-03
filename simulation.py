@@ -19,9 +19,12 @@ class SIMULATION:
         p.setAdditionalSearchPath(pybullet_data.getDataPath())
         p.setGravity(c.GRAVITY_X,c.GRAVITY_Y,c.GRAVITY_Z)
         
-        
-        self.world = WORLD()
+       
+
+
+
         self.robot = ROBOT()
+        self.world = WORLD()
         
         
      
@@ -35,10 +38,12 @@ class SIMULATION:
                 
         for i in range(c.RUNTIME):
             
+            p.stepSimulation()
             self.robot.Sense(i)
             self.robot.act(i)
 
             time.sleep(c.SLEEPTIME)
+            
            
         
 

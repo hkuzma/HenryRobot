@@ -12,7 +12,7 @@ phaseOffset2 = 0
 
 MAXFORCE = 30
 
-SLEEPTIME = 1/60
+SLEEPTIME = 1/20
 
 GRAVITY_X = 0
 GRAVITY_Y = 0
