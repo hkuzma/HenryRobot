@@ -27,6 +27,7 @@ class SIMULATION:
         self.world = WORLD()
         
         
+        
      
         
         
@@ -40,6 +41,9 @@ class SIMULATION:
             
             p.stepSimulation()
             self.robot.Sense(i)
+            
+            self.robot.Think()
+
             self.robot.act(i)
 
             time.sleep(c.SLEEPTIME)

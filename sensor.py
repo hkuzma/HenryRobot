@@ -6,7 +6,6 @@ class SENSOR:
 
     
     def __init__(self, linkName):
-        
         sensor = SENSOR
         self.linkName = linkName
         sensor.Prepare_To_Sense(self)
@@ -16,8 +15,6 @@ class SENSOR:
     
     def Get_Value(self, t):
         self.values[t] = pyrosim.Get_Touch_Sensor_Value_For_Link(self.linkName)
-        if t == c.RUNTIME-1:
-            print(self.values)
     
     def saveSensorValues(self):
         numpy.save(f"data\\{self.linkName}SensorValues.npy", self.values)
