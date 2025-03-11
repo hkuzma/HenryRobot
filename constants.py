@@ -1,6 +1,6 @@
 import numpy
 
-RUNTIME = 1000
+RUNTIME = 10000
 
 amplitude = numpy.pi/4
 frequency = 20
@@ -12,7 +12,7 @@ phaseOffset2 = 0
 
 MAXFORCE = 30
 
-SLEEPTIME = 1/20
+SLEEPTIME = 1/600
 
 GRAVITY_X = 0
 GRAVITY_Y = 0

@@ -36,6 +36,10 @@ class ROBOT:
         for linkName in self.sensors:
             self.sensors[linkName].Get_Value(t)
             
+    def Think(self):
+        self.nn.Update()
+        self.nn.Print()   
+            
     def Prepare_To_Act(self):
         self.motors = {}
         
@@ -51,7 +55,7 @@ class ROBOT:
 
                 self.motors[jointName].Set_Value(self, desiredAngle)
 
-                print(f"{neuronName} // {jointName} // {desiredAngle}")
+                #print(f"{neuronName} // {jointName} // {desiredAngle}")
                 
                 
 
@@ -60,11 +64,7 @@ class ROBOT:
         # for jointName in self.motors:
         #     self.motors[jointName].Set_Value(self, t)
             
-    def Think(self):
-        self.nn.Update()
-        
-
-        self.nn.Print()            
+         
     
             
             

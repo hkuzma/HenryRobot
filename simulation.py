@@ -40,6 +40,7 @@ class SIMULATION:
         for i in range(c.RUNTIME):
             
             p.stepSimulation()
+            
             self.robot.Sense(i)
             
             self.robot.Think()
