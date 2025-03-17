@@ -1,6 +1,6 @@
 import numpy
 
-RUNTIME = 10000
+RUNTIME = 1000
 
 amplitude = numpy.pi/4
 frequency = 20
