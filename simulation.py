@@ -10,12 +10,15 @@ import time
 
 class SIMULATION:
     
-    def __init__(self):
+    def __init__(self, DIRECT):
         
         simulation = SIMULATION
         
-        
-        self.physicsClient = p.connect(p.GUI)
+        if DIRECT == "DIRECT":
+            self.physicsClient = p.connect(p.DIRECT)
+        else:
+            self.physicsClient = p.connect(p.GUI)
+
         p.setAdditionalSearchPath(pybullet_data.getDataPath())
         p.setGravity(c.GRAVITY_X,c.GRAVITY_Y,c.GRAVITY_Z)
         
@@ -24,17 +27,11 @@ class SIMULATION:
 
 
         self.robot = ROBOT()
-        self.world = WORLD()
-        
-        
-        
-     
-        
-        
+        self.world = WORLD()\
+            
     def __del__(self):
         p.disconnect()
-
-         
+ 
     def run(self):
                 
         for i in range(c.RUNTIME):
@@ -48,6 +45,9 @@ class SIMULATION:
             self.robot.act(i)
 
             time.sleep(c.SLEEPTIME)
+            
+    def Get_Fitness(self):
+        self.robot.Get_Fitness()
             
            
         
