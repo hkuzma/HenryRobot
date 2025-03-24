@@ -19,7 +19,8 @@ world_z = 0.5
 
 class SOLUTION:
     
-    def __init__(self):
+    def __init__(self, id):
+        self.myID = id
         self.weights = np.random.rand(3,2)
         self.weights = (self.weights *2 - 1)
     
@@ -27,6 +28,7 @@ class SOLUTION:
         pyrosim.Start_SDF("world.sdf")
         pyrosim.Send_Cube(name="Box", pos=[world_x,world_y,world_z] , size=[length,width,height])
         pyrosim.End()
+       
     
     def three_joint(self):
         pyrosim.Start_URDF("body.urdf")
@@ -40,10 +42,11 @@ class SOLUTION:
         pyrosim.Send_Cube(name="FrontLeg", pos=[.5,0,-.5] , size=[length,width,height], color="5 1.0 1.0 1.0", color_name="pink")
         
         pyrosim.End()
+        
     
     def Generate_Brain(self):
         #NEURONS
-        pyrosim.Start_NeuralNetwork("brain.nndf")
+        pyrosim.Start_NeuralNetwork(f"brain{self.myID}.nndf")
         pyrosim.Send_Sensor_Neuron(name = 0 , linkName = "Torso")
         pyrosim.Send_Sensor_Neuron(name = 1 , linkName = "BackLeg")
         pyrosim.Send_Sensor_Neuron(name = 2 , linkName = "FrontLeg")
@@ -56,25 +59,45 @@ class SOLUTION:
                 pyrosim.Send_Synapse(sourceNeuronName= currentRow, targetNeuronName= (currentColumn+3), weight=self.weights[currentRow][currentColumn])
         
         pyrosim.End()
-
-
         
+
+    def Start_Simulation(self, type):
         
-    def Evaluate(self, type):
         self.Create_World()
         self.three_joint()
         self.Generate_Brain()
+        if type == "GUI":
+            os.system(f"python simulate.py {type} {str(self.myID)}")
+        else:
+            os.system(f"START /B python simulate.py {type} {str(self.myID)}")
+
+       
+    
+    def Wait_For_Simulation_To_End(self, type):
         
-        os.system(f"python simulate.py {type}")
-        f = open("fitness.txt")
+        while not os.path.exists(f"fitness{str(self.myID)}.txt"):
+            time.sleep(0.01)
+        
+        f = open(f"fitness{str(self.myID)}.txt")
         self.fitness = float(f.read())
-    
         f.close()
+        
+        os.system(f"del fitness{str(self.myID)}.txt")
     
+        
+        
+    def Evaluate(self, type):
+        pass
+        
+        
+        
     def Mutate(self):
         randomRow = random.randint(0,2)
         randomCol = random.randint(0,1)
         self.weights[randomRow][randomCol] = random.random() * 2 - 1
+        
+    def Set_ID(self, id):
+        self.myID = id
     
         
     

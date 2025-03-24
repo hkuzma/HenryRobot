@@ -1,6 +1,6 @@
 import numpy
 
-RUNTIME = 1000
+RUNTIME = 10000
 
 amplitude = numpy.pi/4
 frequency = 20
@@ -22,3 +22,5 @@ NUMPY_START = 0
 NUMPY_STOP =  2 * numpy.pi
 
 numberOfGenerations = 10
+
+populationSize = 10
