@@ -1,6 +1,6 @@
 import numpy
 
-RUNTIME = 10000
+RUNTIME = 1000
 
 amplitude = numpy.pi/4
 frequency = 20
@@ -12,7 +12,7 @@ phaseOffset2 = 0
 
 MAXFORCE = 30
 
-SLEEPTIME = 1/600
+SLEEPTIME = 1/60
 
 GRAVITY_X = 0
 GRAVITY_Y = 0
@@ -21,6 +21,11 @@ GRAVITY_Z = -9.8
 NUMPY_START = 0 
 NUMPY_STOP =  2 * numpy.pi
 
-numberOfGenerations = 10
+numberOfGenerations = 20
 
 populationSize = 10
+
+numSensorNeurons = 9
+numMotorNeurons =8
+
+motorJointRange = .3

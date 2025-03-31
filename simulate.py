@@ -12,7 +12,7 @@ except:
 try: 
     solutionID = sys.argv[2]
 except:
-    solutionID = 2
+    solutionID = ''
 
 sim = SIMULATION(directOrGUI, solutionID)
 sim.run()
