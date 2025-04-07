@@ -65,6 +65,9 @@ class ROBOT:
         self.stateOfLinkZero = p.getLinkState(self.robotId,0)
         self.basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
         
+        
+        
+        
         self.positionOfLinkZero = self.stateOfLinkZero[0]
         self.basePosition = self.basePositionAndOrientation[0]
         
