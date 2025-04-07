@@ -2,6 +2,7 @@ from solution import SOLUTION
 import constants as c
 import copy
 import os
+import time
 
 class PARALELL_HILL_CLIMBER:
     
@@ -50,7 +51,7 @@ class PARALELL_HILL_CLIMBER:
       
     def Select(self):
         for i in self.parents:
-            if(self.children[i].fitness < self.parents[i].fitness):
+            if(self.children[i].fitness > self.parents[i].fitness):
                 self.parents[i] = self.children[i]
     
         
@@ -62,10 +63,10 @@ class PARALELL_HILL_CLIMBER:
         print("==============================================================================")
 
     def Show_Best(self):
-        lowest = 5
+        lowest = -1000
         index = -1
         for parent in self.parents:
-            if self.parents[parent].fitness<lowest:
+            if self.parents[parent].fitness>lowest:
                 lowest = self.parents[parent].fitness
                 index = parent        
 
@@ -76,6 +77,7 @@ class PARALELL_HILL_CLIMBER:
     def Evaluate(self, solutions):
         for i in solutions:
             solutions[i].Start_Simulation("DIRECT")
+            #time.sleep(.01)
         for i in solutions:
             solutions[i].Wait_For_Simulation_To_End("DIRECT")
         

@@ -26,6 +26,8 @@ class ROBOT:
         
         os.system(f"del brain{self.solutionID}.nndf")
         
+        self.yPositions = []
+        
         
         
         
@@ -37,6 +39,8 @@ class ROBOT:
             self.sensors[linkName] = SENSOR(linkName)
             
     def Sense(self, t):
+        print(self.sensors)
+        exit()
         for linkName in self.sensors:
             self.sensors[linkName].Get_Value(t)
             
@@ -60,13 +64,21 @@ class ROBOT:
 
     def Get_Fitness(self):
         self.stateOfLinkZero = p.getLinkState(self.robotId,0)
+        self.basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
         
         self.positionOfLinkZero = self.stateOfLinkZero[0]
+        self.basePosition = self.basePositionAndOrientation[0]
         
         self.xCoordinateOfLinkZero = self.positionOfLinkZero[0]
+        self.yPosition = self.basePosition[0]
+        
+        #SETS Y POSITION TO 1 TIME MAXIMAL POS
+        self.yPositions.append(self.yPosition)
+        
+        self.yPosition = max(self.yPositions)
         
         f = open(f"tmp{self.solutionID}.txt", "w")
-        f.write(f"{self.xCoordinateOfLinkZero}")
+        f.write(f"{self.yPosition}")
         f.close()
         os.system(f"rename tmp{self.solutionID}.txt fitness{self.solutionID}.txt")
 
