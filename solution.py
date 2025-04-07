@@ -36,7 +36,8 @@ class SOLUTION:
         # color string follows format "0 1.0 1.0 1.0" (rgba)
         pyrosim.Start_URDF("body.urdf")
         #TORSO
-        pyrosim.Send_Cube(name="Torso", pos=[0,0,1] , size=[length,width,height])
+        
+        pyrosim.Send_Cube(name="Torso", pos=[0,0,1] , size=[0.5,width,height])
         #Backleg
         pyrosim.Send_Joint(name = "Torso_BackLeg" , parent= "Torso" , child = "BackLeg" , type = "revolute", position = [0,-.5,1], jointAxis="1 0 0")
         pyrosim.Send_Cube(name="BackLeg", pos=[0,-.5,0] , size=[0.2,1,0.2], color="1.0 5 0.0 1.0", color_name="green")
@@ -49,18 +50,21 @@ class SOLUTION:
         #FrontLowerLeg
         pyrosim.Send_Joint(name = "FrontLeg_FrontLowerLeg", parent="FrontLeg", child = "FrontLowerLeg", type = "revolute", position= [0,1,0], jointAxis="1 0 0")
         pyrosim.Send_Cube(name = "FrontLowerLeg", pos=[0,0,-.5] , size=[0.2,0.2,1], color="1.0 5 0.0 1.0", color_name="green")
-        #Leftleg
-        pyrosim.Send_Joint(name = "Torso_LeftLeg" , parent= "Torso", child = "LeftLeg", type = "revolute", position =[-.5,0,1],jointAxis="0 1 0")
-        pyrosim.Send_Cube(name = "LeftLeg", pos=[-.5,0,0],  size=[1,0.2,0.2], color="5 1.0 1.0 1.0", color_name="pink")
-        #LeftLowerLeg
-        pyrosim.Send_Joint(name = "LeftLeg_LeftLowerLeg", parent="LeftLeg", child = "LeftLowerLeg", type = "revolute", position= [-1,0,0], jointAxis="0 1 0")
-        pyrosim.Send_Cube(name="LeftLowerLeg", pos=[0,0,-.5] , size=[0.2,0.2,1], color="5 1.0 1.0 1.0", color_name="pink")
-        #Rightleg
-        pyrosim.Send_Joint(name = "Torso_RightLeg" , parent= "Torso", child = "RightLeg", type = "revolute", position =[.5,0,1],jointAxis="0 1 0")
-        pyrosim.Send_Cube(name = "RightLeg", pos=[.5,0,0],  size=[1,0.2,0.2], color="5 1.0 1.0 1.0", color_name="pink")
-        #RightLowerLeg
-        pyrosim.Send_Joint(name = "RightLeg_RightLowerLeg", parent="RightLeg", child = "RightLowerLeg", type = "revolute", position= [1,0,0], jointAxis="0 1 0")
-        pyrosim.Send_Cube(name="RightLowerLeg", pos=[0,0,-.5] , size=[0.2,0.2,1], color="5 1.0 1.0 1.0", color_name="pink")
+       
+       
+       
+        # #Leftleg
+        # pyrosim.Send_Joint(name = "Torso_LeftLeg" , parent= "Torso", child = "LeftLeg", type = "revolute", position =[-.5,0,1],jointAxis="0 1 0")
+        # pyrosim.Send_Cube(name = "LeftLeg", pos=[-.5,0,0],  size=[1,0.2,0.2], color="5 1.0 1.0 1.0", color_name="pink")
+        # #LeftLowerLeg
+        # pyrosim.Send_Joint(name = "LeftLeg_LeftLowerLeg", parent="LeftLeg", child = "LeftLowerLeg", type = "revolute", position= [-1,0,0], jointAxis="0 1 0")
+        # pyrosim.Send_Cube(name="LeftLowerLeg", pos=[0,0,-.5] , size=[0.2,0.2,1], color="5 1.0 1.0 1.0", color_name="pink")
+        # #Rightleg
+        # pyrosim.Send_Joint(name = "Torso_RightLeg" , parent= "Torso", child = "RightLeg", type = "revolute", position =[.5,0,1],jointAxis="0 1 0")
+        # pyrosim.Send_Cube(name = "RightLeg", pos=[.5,0,0],  size=[1,0.2,0.2], color="5 1.0 1.0 1.0", color_name="pink")
+        # #RightLowerLeg
+        # pyrosim.Send_Joint(name = "RightLeg_RightLowerLeg", parent="RightLeg", child = "RightLowerLeg", type = "revolute", position= [1,0,0], jointAxis="0 1 0")
+        # pyrosim.Send_Cube(name="RightLowerLeg", pos=[0,0,-.5] , size=[0.2,0.2,1], color="5 1.0 1.0 1.0", color_name="pink")
         
         pyrosim.End()
         
@@ -115,6 +119,7 @@ class SOLUTION:
             os.system(f"python simulate.py {type} {str(self.myID)}")
         else:
             os.system(f"START /B python simulate.py {type} {str(self.myID)}")
+       
 
        
     
@@ -122,6 +127,7 @@ class SOLUTION:
         
         while not os.path.exists(f"fitness{str(self.myID)}.txt"):
             time.sleep(0.05)
+            print("NOBODY")
         
         f = open(f"fitness{str(self.myID)}.txt")
         self.fitness = float(f.read())

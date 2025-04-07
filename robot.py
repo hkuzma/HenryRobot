@@ -39,8 +39,7 @@ class ROBOT:
             self.sensors[linkName] = SENSOR(linkName)
             
     def Sense(self, t):
-        print(self.sensors)
-        exit()
+        #print(self.sensors)
         for linkName in self.sensors:
             self.sensors[linkName].Get_Value(t)
             
@@ -81,6 +80,7 @@ class ROBOT:
         f.write(f"{self.yPosition}")
         f.close()
         os.system(f"rename tmp{self.solutionID}.txt fitness{self.solutionID}.txt")
+        
 
 
                 

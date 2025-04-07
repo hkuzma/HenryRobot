@@ -1,6 +1,7 @@
 from simulation import SIMULATION
 from pyrosim.neuralNetwork import NEURAL_NETWORK
 import sys
+import os
 
 
 
