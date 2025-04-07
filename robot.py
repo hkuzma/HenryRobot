@@ -26,7 +26,7 @@ class ROBOT:
         
         os.system(f"del brain{self.solutionID}.nndf")
         
-        self.yPositions = []
+        self.zPositions = []
         
         
         
@@ -69,15 +69,17 @@ class ROBOT:
         self.basePosition = self.basePositionAndOrientation[0]
         
         self.xCoordinateOfLinkZero = self.positionOfLinkZero[0]
-        self.yPosition = self.basePosition[0]
+        
+        
+        self.zPosition = self.basePosition[2]
         
         #SETS Y POSITION TO 1 TIME MAXIMAL POS
-        self.yPositions.append(self.yPosition)
+        self.zPositions.append(self.zPosition)
         
-        self.yPosition = max(self.yPositions)
+        self.zPosition = max(self.zPositions)
         
         f = open(f"tmp{self.solutionID}.txt", "w")
-        f.write(f"{self.yPosition}")
+        f.write(f"{self.zPosition}")
         f.close()
         os.system(f"rename tmp{self.solutionID}.txt fitness{self.solutionID}.txt")
         
