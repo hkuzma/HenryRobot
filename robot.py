@@ -74,7 +74,7 @@ class ROBOT:
         #SETS Y POSITION TO 1 TIME MAXIMAL POS
         self.yPositions.append(self.yPosition)
         
-        self.yPosition = max(self.yPositions)
+        self.yPosition = min(self.yPositions)
         
         f = open(f"tmp{self.solutionID}.txt", "w")
         f.write(f"{self.yPosition}")
