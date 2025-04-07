@@ -54,17 +54,17 @@ class SOLUTION:
        
        
         # #Leftleg
-        # pyrosim.Send_Joint(name = "Torso_LeftLeg" , parent= "Torso", child = "LeftLeg", type = "revolute", position =[-.5,0,1],jointAxis="0 1 0")
-        # pyrosim.Send_Cube(name = "LeftLeg", pos=[-.5,0,0],  size=[1,0.2,0.2], color="5 1.0 1.0 1.0", color_name="pink")
-        # #LeftLowerLeg
-        # pyrosim.Send_Joint(name = "LeftLeg_LeftLowerLeg", parent="LeftLeg", child = "LeftLowerLeg", type = "revolute", position= [-1,0,0], jointAxis="0 1 0")
-        # pyrosim.Send_Cube(name="LeftLowerLeg", pos=[0,0,-.5] , size=[0.2,0.2,1], color="5 1.0 1.0 1.0", color_name="pink")
-        # #Rightleg
-        # pyrosim.Send_Joint(name = "Torso_RightLeg" , parent= "Torso", child = "RightLeg", type = "revolute", position =[.5,0,1],jointAxis="0 1 0")
-        # pyrosim.Send_Cube(name = "RightLeg", pos=[.5,0,0],  size=[1,0.2,0.2], color="5 1.0 1.0 1.0", color_name="pink")
-        # #RightLowerLeg
-        # pyrosim.Send_Joint(name = "RightLeg_RightLowerLeg", parent="RightLeg", child = "RightLowerLeg", type = "revolute", position= [1,0,0], jointAxis="0 1 0")
-        # pyrosim.Send_Cube(name="RightLowerLeg", pos=[0,0,-.5] , size=[0.2,0.2,1], color="5 1.0 1.0 1.0", color_name="pink")
+        pyrosim.Send_Joint(name = "Torso_LeftLeg" , parent= "Torso", child = "LeftLeg", type = "revolute", position =[-.5,0,1],jointAxis="0 1 0")
+        pyrosim.Send_Cube(name = "LeftLeg", pos=[-.5,0,0],  size=[1,0.2,0.2], color="5 1.0 1.0 1.0", color_name="pink")
+        #LeftLowerLeg
+        pyrosim.Send_Joint(name = "LeftLeg_LeftLowerLeg", parent="LeftLeg", child = "LeftLowerLeg", type = "revolute", position= [-1,0,0], jointAxis="0 1 0")
+        pyrosim.Send_Cube(name="LeftLowerLeg", pos=[0,0,-.5] , size=[0.2,0.2,1], color="5 1.0 1.0 1.0", color_name="pink")
+        #Rightleg
+        pyrosim.Send_Joint(name = "Torso_RightLeg" , parent= "Torso", child = "RightLeg", type = "revolute", position =[.5,0,1],jointAxis="0 1 0")
+        pyrosim.Send_Cube(name = "RightLeg", pos=[.5,0,0],  size=[1,0.2,0.2], color="5 1.0 1.0 1.0", color_name="pink")
+        #RightLowerLeg
+        pyrosim.Send_Joint(name = "RightLeg_RightLowerLeg", parent="RightLeg", child = "RightLowerLeg", type = "revolute", position= [1,0,0], jointAxis="0 1 0")
+        pyrosim.Send_Cube(name="RightLowerLeg", pos=[0,0,-.5] , size=[0.2,0.2,1], color="5 1.0 1.0 1.0", color_name="pink")
         
         pyrosim.End()
         
