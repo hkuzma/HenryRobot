@@ -5,6 +5,7 @@ import pyrosim.pyrosim as pyrosim
 from pyrosim.neuralNetwork import NEURAL_NETWORK
 import os
 import constants as c
+import numpy as n
 
 
 
@@ -45,6 +46,13 @@ class ROBOT:
             
     def Think(self):
         self.nn.Update()
+        
+        
+        
+        self.stateOfLinkZero = p.getLinkState(self.robotId,0)
+        self.positionOfLinkZero = self.stateOfLinkZero[0]
+        self.zPosition = self.positionOfLinkZero[2]
+        self.zPositions.append(self.zPosition)
         #self.nn.Print()   
             
     def Prepare_To_Act(self):
@@ -66,6 +74,18 @@ class ROBOT:
         self.basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
         
         
+        #print(self.nn.Get_Neuron_Names())
+        5/6
+        #print(self.sensors.keys())
+        
+        BackFoot = n.average(self.sensors['BackFoot'].Get_Values())
+        FrontFoot = n.average(self.sensors['FrontFoot'].Get_Values())
+        Torso = n.average(self.sensors["Torso"].Get_Values())
+        BackLeg = n.average(self.sensors["BackLeg"].Get_Values())
+        FrontLeg = n.average(self.sensors["FrontLeg"].Get_Values())
+        
+
+
         
         
         self.positionOfLinkZero = self.stateOfLinkZero[0]
@@ -73,15 +93,24 @@ class ROBOT:
         
         self.xCoordinateOfLinkZero = self.positionOfLinkZero[0]
         
-        self.zPosition = self.basePosition[2]
+        #self.zPosition = self.basePosition[2]  #WHAT IS THIS RETURNING???
         
         #SETS Y POSITION TO 1 TIME MAXIMAL POS
-        self.zPositions.append(self.zPosition)
+        #self.zPositions.append(self.zPosition)
         
-        #self.zPosition = min(self.zPositions)
+        z_avg = n.average(self.zPositions)
+        minimum = min(self.zPositions)
+        # if minimum <.85:
+        #     minimum = 100
+        
+        fitness = (15*BackFoot + 15*FrontFoot + Torso + 5*BackLeg + 5*FrontLeg)/5 + max(self.zPositions)
+        print(z_avg)
+        print(max(self.zPositions))
+        print(f"MIN: {min(self.zPositions)}")
+
         
         f = open(f"tmp{self.solutionID}.txt", "w")
-        f.write(f"{self.zPosition}")
+        f.write(f"{fitness}")
         f.close()
         os.system(f"rename tmp{self.solutionID}.txt fitness{self.solutionID}.txt")
         

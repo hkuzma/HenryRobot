@@ -2,7 +2,7 @@ import os
 from hillclimber import HILL_CLIMBER
 from paralellHillClimber import PARALELL_HILL_CLIMBER
 
-
+    
 
 phc = PARALELL_HILL_CLIMBER()
 
