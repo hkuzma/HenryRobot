@@ -110,10 +110,10 @@ class ROBOT:
         #print(self.sensors.keys())
         
         #FIND MAXIMUM HEIGHT OF EACH LEG
-        # maxLeg1Height = max(self.BackLowerLegZpositions)
-        # maxLeg2Height = max(self.FrontLowerLegZpositions)
-        # maxLeg3Height = max(self.LeftLowerLegZpositions)
-        # maxLeg4Height = max(self.RightLowerLegZpositions)
+        maxLeg1Height = max(self.BackLowerLegZpositions)
+        maxLeg2Height = max(self.FrontLowerLegZpositions)
+        maxLeg3Height = max(self.LeftLowerLegZpositions)
+        maxLeg4Height = max(self.RightLowerLegZpositions)
         
         maxHeight = max(self.zPositions)
         
@@ -196,18 +196,32 @@ class ROBOT:
         #Determine how many of these time steps are in a row
         maxSequence = 0      
         sequence = 0
+        sequences = []
         for i in range(1, len(indexes)):
             if indexes[i] == indexes[i-1] + 1:
                 sequence += 1
             elif sequence > maxSequence:
                 maxSequence = sequence
+                sequences.append(sequence)
+                sequence = 0
+            elif sequence > 3:
+                sequences.append(sequence)
                 sequence = 0
             else:
                 sequence = 0
-        fitness = maxSequence
+         
+      
+                
         
-        #fitness *= maxHeight
+        
+        #fitness = 5*maxSequence + len(sequences)
+        fitness = maxSequence + ((maxLeg1Height*2 + maxLeg2Height + maxLeg3Height*2 + maxLeg4Height)/4 *len(sequences))/5
+        
+        #CREATES MANY SMALL HOPS
+        # fitness = (3*n.average(sequences))*len(sequences)
 
+        #FITNESS FUNCTION LEADS TO TIP TAPPING ROBOT THAT MAKES MANY SMALL JUMPS
+        #fitness = maxSequence + len(indexes)
 
         
         
@@ -217,7 +231,7 @@ class ROBOT:
         
         f = open("ROBOT LEG VALUES", 'a')
         #f.write(f"BACKFOOT: {BackFoot[20]}, FRONTFOOT: {FrontFoot[20]}, LEFTFOOT: {LeftFoot[20]}, RIGHTFOOT: {RightFoot[20]} || TOTAL {fitness} \n")
-        f.write(f"INDEXES: {indexes} \n")
+        f.write(f"INDEXES: {sequences} \n")
         f.write(f"MAXSEQUENCE: {maxSequence}")
         #f.write(f"\n{elseFIT}\n")
         f.close()

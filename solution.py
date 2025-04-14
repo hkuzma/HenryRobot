@@ -100,10 +100,14 @@ class SOLUTION:
         pyrosim.Send_Motor_Neuron( name = 15, jointName = "LeftLeg_LeftLowerLeg")
         pyrosim.Send_Motor_Neuron( name = 16 , jointName = "RightLeg_RightLowerLeg")
         
-        pyrosim.Send_Synapse(sourceNeuronName= 1, targetNeuronName= 1, weight=self.weights[1][1])
-        pyrosim.Send_Synapse(sourceNeuronName= 1, targetNeuronName= 2, weight=self.weights[1][1])
+        # pyrosim.Send_Synapse(sourceNeuronName= 1, targetNeuronName= 1, weight=self.weights[1][1])
+        # pyrosim.Send_Synapse(sourceNeuronName= 1, targetNeuronName= 2, weight=self.weights[1][1])
+        
+        # pyrosim.Send_Synapse(sourceNeuronName= 2, targetNeuronName= 1, weight=self.weights[2][1])
+        # pyrosim.Send_Synapse(sourceNeuronName= 2, targetNeuronName= 2, weight=self.weights[2][1])
 
-        pyrosim.Send_Synapse(sourceNeuronName= currentRow, targetNeuronName= (currentColumn+c.numSensorNeurons), weight=self.weights[currentRow][currentColumn])
+        # pyrosim.Send_Synapse(sourceNeuronName= currentRow, targetNeuronName= (currentColumn+c.numSensorNeurons), weight=self.weights[currentRow][currentColumn])
+        
 
         
            
@@ -133,6 +137,8 @@ class SOLUTION:
         while not os.path.exists(f"fitness{str(self.myID)}.txt"):
             time.sleep(0.05)
             print("NOBODY")
+        
+        time.sleep(0.01)
         
         f = open(f"fitness{str(self.myID)}.txt")
         self.fitness = float(f.read())
