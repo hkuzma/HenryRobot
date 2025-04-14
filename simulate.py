@@ -18,4 +18,5 @@ except:
 sim = SIMULATION(directOrGUI, solutionID)
 sim.run()
 sim.Get_Fitness()
+
 sim.__del__()

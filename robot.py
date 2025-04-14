@@ -53,11 +53,11 @@ class ROBOT:
         self.nn.Update()
         
         
-        self.stateOfLinkZero = p.getLinkState(self.robotId,0)
-        self.positionOfLinkZero = self.stateOfLinkZero[0]
-        self.zPosition = self.positionOfLinkZero[2]
-        self.zPositions.append(self.zPosition)
-        #self.nn.Print()   
+        # self.stateOfLinkZero = p.getLinkState(self.robotId,0)
+        # self.positionOfLinkZero = self.stateOfLinkZero[0]
+        # self.zPosition = self.positionOfLinkZero[2]
+        # self.zPositions.append(self.zPosition)
+        # #self.nn.Print()   
         
         self.stateOfBackLowerLeg = p.getLinkState(self.robotId,1)
         self.positionOfBackLowerLeg = self.stateOfBackLowerLeg[0]
@@ -93,7 +93,10 @@ class ROBOT:
         for neuronName in self.nn.Get_Neuron_Names():
             if self.nn.Is_Motor_Neuron(neuronName):
                 jointName = self.nn.Get_Motor_Neurons_Joint(neuronName).encode('utf-8')
-                desiredAngle = self.nn.Get_Value_Of(neuronName) * c.motorJointRange
+                if "Lower" in str(jointName):
+                    desiredAngle = self.nn.Get_Value_Of(neuronName) * c.motorJointRange
+                else:
+                    desiredAngle = self.nn.Get_Value_Of(neuronName) * ( c.motorJointRange)
 
                 self.motors[jointName].Set_Value(self, desiredAngle)
 
@@ -107,51 +110,115 @@ class ROBOT:
         #print(self.sensors.keys())
         
         #FIND MAXIMUM HEIGHT OF EACH LEG
-        maxLeg1Height = max(self.BackLowerLegZpositions)
-        maxLeg2Height = max(self.FrontLowerLegZpositions)
-        maxLeg3Height = max(self.LeftLowerLegZpositions)
-        maxLeg4Height = max(self.RightLowerLegZpositions)
+        # maxLeg1Height = max(self.BackLowerLegZpositions)
+        # maxLeg2Height = max(self.FrontLowerLegZpositions)
+        # maxLeg3Height = max(self.LeftLowerLegZpositions)
+        # maxLeg4Height = max(self.RightLowerLegZpositions)
         
-        LEGHEIGHT = maxLeg1Height-1 + maxLeg2Height-1 + maxLeg3Height-1 + maxLeg4Height-1
+        
+
+        
+        
+        
+        # LEGHEIGHT = maxLeg1Height-1 + maxLeg2Height-1 + maxLeg3Height-1 + maxLeg4Height-1
         
         #FIND AVERAGE OF TOUCH SENSOR VALUES
-        BackFoot = n.average(self.sensors['BackLowerLeg'].Get_Values())
-        FrontFoot = n.average(self.sensors['FrontLowerLeg'].Get_Values())
+        BackFoot = self.sensors['BackLowerLeg'].Get_Values()
+        FrontFoot = self.sensors['FrontLowerLeg'].Get_Values()
         #Torso = n.average(self.sensors["Torso"].Get_Values())
-        BackLeg = n.average(self.sensors["RightLowerLeg"].Get_Values())
-        FrontLeg = n.average(self.sensors["LeftLowerLeg"].Get_Values())
+        RightFoot = self.sensors["RightLowerLeg"].Get_Values()
+        LeftFoot = self.sensors["LeftLowerLeg"].Get_Values()
+        
+        BackFootHeights = self.BackLowerLegZpositions
+        FrontFootHeights = self.FrontLowerLegZpositions
+        LeftFootHeights = self.LeftLowerLegZpositions
+        RightFootHeights = self.RightLowerLegZpositions
+        
+        # print(f"BACKFOOT{BackFoot[20]}")
+        
+        # BackFootSenses = [BackFoot[20]]
+        # FrontFootSenses = [FrontFoot[20]]
+        # LeftFootSenses = [LeftFoot[20]]
+        # RightFootSenses = [RightFoot[20]]
+        
         
         #HOW TO FIND LONGEST TIME OFF GROUND???
         
         
-        self.positionOfLinkZero = self.stateOfLinkZero[0]
-        self.basePosition = self.basePositionAndOrientation[0]
+        # self.positionOfLinkZero = self.stateOfLinkZero[0]
+        # self.basePosition = self.basePositionAndOrientation[0]
         
-        self.xCoordinateOfLinkZero = self.positionOfLinkZero[0]
+        # self.xCoordinateOfLinkZero = self.positionOfLinkZero[0]
         
         #self.zPosition = self.basePosition[2]  #WHAT IS THIS RETURNING???
         
         #SETS Y POSITION TO 1 TIME MAXIMAL POS
         #self.zPositions.append(self.zPosition)
         
-        z_avg = n.average(self.zPositions)
-        minimum = min(self.zPositions)
-        maximum = max(self.zPositions)
+        # z_avg = n.average(self.zPositions)
+        # minimum = min(self.zPositions)
+        # maximum = max(self.zPositions)
         # if minimum <.85:
         #     minimum = 100
         
-        
-        fitness = (BackFoot + FrontFoot + BackLeg + FrontLeg)/4 + LEGHEIGHT + 5*(maximum - minimum) + maximum
-        print(z_avg)
-        print(max(self.zPositions))
-        print(f"MIN: {min(self.zPositions)}")
+        # fitness = 0
+        # for i in range(0,10):
+        #     # if BackFoot[20+i] == -1 and FrontFoot[20+i] == -1 and LeftFoot[20+i] == -1 and RightFoot[20+i] == -1:
+        #     #     fitness+=1
+        #     if BackFootHeights[20+i] > .52 and FrontFootHeights[20+i] > .52 and LeftFootHeights[20+i] >.52 and RightFootHeights[20+i] >.52:
+        #         fitness+= BackFootHeights[20+i]
+        #     else:
+        #         elseFIT =  f"{(max(BackFootHeights[20:30]) -.55)}, {(max(FrontFootHeights[20:30]) -.55)}, {(max(LeftFootHeights[20:30]) -.55)}, {(max(RightFootHeights[20:30]) -.55)}"
+        #         fitness += (max(BackFootHeights[20:30]) -.55) + (max(FrontFootHeights[20:30]) -.55) + (max(LeftFootHeights[20:30]) -.55) + (max(RightFootHeights[20:30]) -.55)
+            
 
+        
+        #fitness = (BackFoot + FrontFoot + LeftFoot + RightFoot)/4 + LEGHEIGHT + 5*(maximum - minimum) + maximum
+        fitness = ((((-1* BackFoot[20]) * (-1 * RightFoot[20])) * (-1* FrontFoot[20])) * (-1*LeftFoot[20]) +
+                   (((-1* BackFoot[21]) * (-1 * RightFoot[21])) * (-1* FrontFoot[21])) * (-1*LeftFoot[21]) +
+                   (((-1* BackFoot[22]) * (-1 * RightFoot[22])) * (-1* FrontFoot[22])) * (-1*LeftFoot[22])                                                                                         )
+                  
+        # print(max(self.zPositions))
+        # print(f"MIN: {min(self.zPositions)}")
+        
+    #MAXIMIZES TIME STEPS IN A ROW WHERE ALL 4 LEGS ARE OFF THE GROUND
+    #PERVERSE INSTANTIATION:: SOMETIMES ROBOT GETS ALL 4 TOUCH SENSORS OFF THE GROUND BY STANDING ON IT's TIPPY TOES
+        #Find all time steps where all 4 legs of ground
+        fitness = 0
+        indexes = []
+        for i in range(len(BackFoot)):
+            if BackFoot[i] == -1 and FrontFoot[i] == -1 and LeftFoot[i] == -1 and RightFoot[i] == -1:
+                fitness += 1
+                indexes.append(i)
+        
+        #Determine how many of these time steps are in a row
+        maxSequence = 0      
+        sequence = 0
+        for i in range(1, len(indexes)):
+            if indexes[i] == indexes[i-1] + 1:
+                sequence += 1
+            elif sequence > maxSequence:
+                maxSequence = sequence
+                sequence = 0
+            else:
+                sequence = 0
+        fitness = maxSequence
+
+
+        
         
         f = open(f"tmp{self.solutionID}.txt", "w")
         f.write(f"{fitness}")
         f.close()
-        os.system(f"rename tmp{self.solutionID}.txt fitness{self.solutionID}.txt")
         
+        f = open("ROBOT LEG VALUES", 'a')
+        #f.write(f"BACKFOOT: {BackFoot[20]}, FRONTFOOT: {FrontFoot[20]}, LEFTFOOT: {LeftFoot[20]}, RIGHTFOOT: {RightFoot[20]} || TOTAL {fitness} \n")
+        f.write(f"INDEXES: {indexes} \n")
+        f.write(f"MAXSEQUENCE: {maxSequence}")
+        #f.write(f"\n{elseFIT}\n")
+        f.close()
+        os.system(f"rename tmp{self.solutionID}.txt fitness{self.solutionID}.txt")
+
 
 
                 
