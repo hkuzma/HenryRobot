@@ -28,6 +28,8 @@ class ROBOT:
         os.system(f"del brain{self.solutionID}.nndf")
         
         self.zPositions = []
+        self.RFPositions = []
+        self.LFPositions = []
         
         
         
@@ -53,6 +55,17 @@ class ROBOT:
         self.positionOfLinkZero = self.stateOfLinkZero[0]
         self.zPosition = self.positionOfLinkZero[2]
         self.zPositions.append(self.zPosition)
+        
+        self.stateOfRightFist = p.getLinkState(self.robotId,5)
+        self.positionOfRightFist = self.stateOfRightFist[0]
+        self.RFPosition = self.positionOfRightFist[2]
+        self.RFPositions.append(self.zPosition)
+        
+        self.stateOfLeftFist = p.getLinkState(self.robotId,6)
+        self.positionOfLeftFist = self.stateOfLeftFist[0]
+        self.LFPosition = self.positionOfLeftFist[2]
+        self.LFPositions.append(self.LFPosition)
+        
         #self.nn.Print()   
             
     def Prepare_To_Act(self):
@@ -84,6 +97,8 @@ class ROBOT:
         BackLeg = n.average(self.sensors["BackLeg"].Get_Values())
         FrontLeg = n.average(self.sensors["FrontLeg"].Get_Values())
         
+        RightFist = n.average(self.sensors["RightFist"].Get_Values())
+        LeftFist = n.average(self.sensors["LeftFist"].Get_Values())
 
 
         
@@ -103,7 +118,9 @@ class ROBOT:
         # if minimum <.85:
         #     minimum = 100
         
-        fitness = (15*BackFoot + 15*FrontFoot + Torso + 5*BackLeg + 5*FrontLeg)/5 + max(self.zPositions)
+        fitness = (-1*Torso + -1*BackLeg + -1*FrontLeg + -1*RightFist + -1*LeftFist)/5 + max(self.zPositions) + min(self.RFPositions) + min(self.LFPositions)
+        if min(self.zPositions) < 1:
+            fitness = 0
         print(z_avg)
         print(max(self.zPositions))
         print(f"MIN: {min(self.zPositions)}")
