@@ -77,7 +77,7 @@ class SOLUTION:
         #Upper
         pyrosim.Send_Sensor_Neuron(name = 1 , linkName = "BackLeg")
         pyrosim.Send_Sensor_Neuron(name = 2 , linkName = "FrontLeg")
-        pyrosim.Send_Sensor_Neuron( name = 3 , linkName = "LeftLeg")
+        pyrosim.Send_Sensor_Neuron(name = 3 , linkName = "LeftLeg")
         pyrosim.Send_Sensor_Neuron(name = 4 , linkName = "RightLeg")
 
         #Lower
@@ -100,6 +100,11 @@ class SOLUTION:
         pyrosim.Send_Motor_Neuron( name = 15, jointName = "LeftLeg_LeftLowerLeg")
         pyrosim.Send_Motor_Neuron( name = 16 , jointName = "RightLeg_RightLowerLeg")
         
+        pyrosim.Send_Synapse(sourceNeuronName= 1, targetNeuronName= 1, weight=self.weights[1][1])
+        pyrosim.Send_Synapse(sourceNeuronName= 1, targetNeuronName= 2, weight=self.weights[1][1])
+
+        pyrosim.Send_Synapse(sourceNeuronName= currentRow, targetNeuronName= (currentColumn+c.numSensorNeurons), weight=self.weights[currentRow][currentColumn])
+
         
            
         for currentRow in range(0,c.numSensorNeurons):

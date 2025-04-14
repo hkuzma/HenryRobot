@@ -53,11 +53,11 @@ class ROBOT:
         self.nn.Update()
         
         
-        # self.stateOfLinkZero = p.getLinkState(self.robotId,0)
-        # self.positionOfLinkZero = self.stateOfLinkZero[0]
-        # self.zPosition = self.positionOfLinkZero[2]
-        # self.zPositions.append(self.zPosition)
-        # #self.nn.Print()   
+        self.stateOfLinkZero = p.getLinkState(self.robotId,0)
+        self.positionOfLinkZero = self.stateOfLinkZero[0]
+        self.zPosition = self.positionOfLinkZero[2]
+        self.zPositions.append(self.zPosition)
+        #self.nn.Print()   
         
         self.stateOfBackLowerLeg = p.getLinkState(self.robotId,1)
         self.positionOfBackLowerLeg = self.stateOfBackLowerLeg[0]
@@ -114,6 +114,8 @@ class ROBOT:
         # maxLeg2Height = max(self.FrontLowerLegZpositions)
         # maxLeg3Height = max(self.LeftLowerLegZpositions)
         # maxLeg4Height = max(self.RightLowerLegZpositions)
+        
+        maxHeight = max(self.zPositions)
         
         
 
@@ -203,6 +205,8 @@ class ROBOT:
             else:
                 sequence = 0
         fitness = maxSequence
+        
+        #fitness *= maxHeight
 
 
         
