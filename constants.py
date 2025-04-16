@@ -25,7 +25,7 @@ numberOfGenerations = 10
 
 populationSize = 10
 
-numSensorNeurons = 7
-numMotorNeurons =6
+numSensorNeurons = 11
+numMotorNeurons =8
 
-motorJointRange = .3
+motorJointRange = .4

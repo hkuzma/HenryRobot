@@ -31,6 +31,11 @@ class ROBOT:
         self.RFPositions = []
         self.LFPositions = []
         
+        self.LeftLowerLegZpositions = []
+        self.RightLowerLegZpositions = []
+        self.LeftFootZpositions = []
+        self.RightFootZpositions = []
+        self.zlinearvels = []
         
         
         
@@ -51,20 +56,43 @@ class ROBOT:
         
         
         
-        self.stateOfLinkZero = p.getLinkState(self.robotId,0)
-        self.positionOfLinkZero = self.stateOfLinkZero[0]
-        self.zPosition = self.positionOfLinkZero[2]
+        self.stateOfLinkZero, orn = p.getBasePositionAndOrientation(self.robotId)
+        self.zPosition = self.stateOfLinkZero[2]
         self.zPositions.append(self.zPosition)
         
-        self.stateOfRightFist = p.getLinkState(self.robotId,5)
+        linear_vel, angular_vel = p.getBaseVelocity(self.robotId)
+        zlinvel = linear_vel[2]
+        
+        
+        self.stateOfRightFist = p.getLinkState(self.robotId,3)
         self.positionOfRightFist = self.stateOfRightFist[0]
         self.RFPosition = self.positionOfRightFist[2]
         self.RFPositions.append(self.zPosition)
         
-        self.stateOfLeftFist = p.getLinkState(self.robotId,6)
+        self.stateOfLeftFist = p.getLinkState(self.robotId,1)
         self.positionOfLeftFist = self.stateOfLeftFist[0]
         self.LFPosition = self.positionOfLeftFist[2]
         self.LFPositions.append(self.LFPosition)
+
+        self.stateOfLeftLowerLeg = p.getLinkState(self.robotId,7)
+        self.positionOfLeftLowerLeg = self.stateOfLeftLowerLeg[0]
+        self.LeftLowerLegZpos = self.positionOfLeftLowerLeg[2]
+        self.LeftLowerLegZpositions.append(self.LeftLowerLegZpos)
+
+        self.stateOfRightLowerLeg = p.getLinkState(self.robotId,8)
+        self.positionOfRightLowerLeg = self.stateOfRightLowerLeg[0] 
+        self.RightLowerLegZpos = self.positionOfRightLowerLeg[2]
+        self.RightLowerLegZpositions.append(self.RightLowerLegZpos)
+        
+        self.stateOfLeftFoot = p.getLinkState(self.robotId, 6)
+        self.positionOfLeftFoot = self.stateOfLeftFoot[0] 
+        self.LeftFootZpos = self.positionOfLeftFoot[2]
+        self.LeftFootZpositions.append(self.RightLowerLegZpos)
+        
+        self.stateOfRightFoot = p.getLinkState(self.robotId, 9)
+        self.positionOfRightFoot = self.stateOfRightFoot[0] 
+        self.RightFootZpos = self.positionOfRightFoot[2]
+        self.RightFootZpositions.append(self.RightFootZpos)
         
         #self.nn.Print()   
             
@@ -91,17 +119,44 @@ class ROBOT:
         5/6
         #print(self.sensors.keys())
         
-        BackFoot = n.average(self.sensors['BackFoot'].Get_Values())
-        FrontFoot = n.average(self.sensors['FrontFoot'].Get_Values())
-        Torso = n.average(self.sensors["Torso"].Get_Values())
-        BackLeg = n.average(self.sensors["BackLeg"].Get_Values())
-        FrontLeg = n.average(self.sensors["FrontLeg"].Get_Values())
+        #UPPPER ARM
+        LeftUpperArm = self.sensors["LeftUpperArm"].Get_Values()
+        RightUpperArm = self.sensors["RightUpperArm"].Get_Values()
+        #LOWER ARM
+        # LeftLowerArm = self.sensors["LeftLowerArm"].Get_Values()
+        # RightLowerArm = self.sensors["RightLowerArm"].Get_Values()
+        #FIST
+        RightFist = self.sensors["RightFist"].Get_Values()
+        LeftFist = self.sensors["LeftFist"].Get_Values()
+        #TORSO
+        Torso = self.sensors["Torso"].Get_Values()
+        #UPPER LEG
+        LeftUpperLeg = self.sensors['BackLeg'].Get_Values()
+        RightUpperLeg = self.sensors['FrontLeg'].Get_Values()
+        #LOWER LEG
+        LeftLowerLeg = self.sensors['BackLowerLeg'].Get_Values()
+        RightLowerLeg = self.sensors['FrontLowerLeg'].Get_Values()
+        #FOOT
+        LeftFoot = self.sensors['BackFoot'].Get_Values()
+        RightFoot = self.sensors['FrontFoot'].Get_Values()
         
-        RightFist = n.average(self.sensors["RightFist"].Get_Values())
-        LeftFist = n.average(self.sensors["LeftFist"].Get_Values())
-
-
+        maxLeftFootHeight = max(self.LeftFootZpositions)
+        maxRightFootHeight = max(self.RightFootZpositions)
+        maxLeftLegHeight = max(self.LeftLowerLegZpositions)
+        maxRightLegHeight = max(self.RightLowerLegZpositions)
         
+        
+        maxHeight = max(self.zPositions)
+        minHeight = min(self.zPositions)
+        avgHeight = n.average(self.zPositions)
+        
+        maxLFHeight = max(self.LFPositions)
+        minLFHeight = min(self.LFPositions)
+        avgLFHeight = n.average(self.LFPositions)
+        
+        maxRFHeight = max(self.RFPositions)
+        minRFHeight = min(self.RFPositions)
+        avgRFHeight = n.average(self.RFPositions)
         
         self.positionOfLinkZero = self.stateOfLinkZero[0]
         self.basePosition = self.basePositionAndOrientation[0]
@@ -109,18 +164,60 @@ class ROBOT:
         self.xCoordinateOfLinkZero = self.positionOfLinkZero[0]
         
         #self.zPosition = self.basePosition[2]  #WHAT IS THIS RETURNING???
-        
         #SETS Y POSITION TO 1 TIME MAXIMAL POS
         #self.zPositions.append(self.zPosition)
         
         z_avg = n.average(self.zPositions)
         minimum = min(self.zPositions)
         # if minimum <.85:
-        #     minimum = 100
+        # minimum = 100
         
-        fitness = (-1*Torso + -1*BackLeg + -1*FrontLeg + -1*RightFist + -1*LeftFist)/5 + max(self.zPositions) + min(self.RFPositions) + min(self.LFPositions)
-        if min(self.zPositions) < 1:
-            fitness = 0
+        
+        fitness = 0
+        indexes = []
+        fisttouch = False
+        for i in range(len(LeftFoot)):
+            if LeftFoot[i] == -1 and RightFoot[i] == -1 and LeftLowerLeg[i] == -1 and RightLowerLeg[i] == -1 and Torso[i] ==-1 and LeftFist[i] == -1 and RightFist[i] == -1:
+                fitness += 1
+                indexes.append(i)
+            if RightFist[i] == 1 or LeftFist[i] == 1:
+                fisttouch = True
+        
+        maxSequence = 0      
+        sequence = 0
+        sequences = []
+        for i in range(1, len(indexes)):
+            if indexes[i] == indexes[i-1] + 1:
+                sequence += 1
+            elif sequence > maxSequence:
+                maxSequence = sequence
+                sequences.append(sequence)
+                sequence = 0
+            elif sequence > 3:
+                sequences.append(sequence)
+                sequence = 0
+            else:
+                sequence = 0
+        
+        
+        fitness = 10*maxSequence + maxHeight + minRFHeight + minLFHeight
+        # if fisttouch:
+        #     fitness = 0
+        
+        fitness = maxRFHeight + maxLFHeight
+        
+        num_joints = p.getNumJoints(self.robotId)
+
+        f = open("JOINT INFO.txt", 'w')
+        
+        for i in range(num_joints):
+            joint_info = p.getJointInfo(self.robotId, i)
+            f.write(f"Index: {i}, Link Name: {joint_info[12].decode('utf-8')}\n")
+        f.close()
+        
+        #fitness = (-1*Torso + -1*BackLeg + -1*FrontLeg + -1*RightFist + -1*LeftFist)/5 + max(self.zPositions) + min(self.RFPositions) + min(self.LFPositions)
+        # if min(self.zPositions) < 1:
+        #     fitness = 0
         print(z_avg)
         print(max(self.zPositions))
         print(f"MIN: {min(self.zPositions)}")
