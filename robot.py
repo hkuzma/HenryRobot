@@ -214,8 +214,9 @@ class ROBOT:
                 
         
         
-        #fitness = 5*maxSequence + len(sequences)
-        fitness = maxSequence + ((maxLeg1Height*2 + maxLeg2Height + maxLeg3Height*2 + maxLeg4Height)/4 *len(sequences))/5
+        fitness = 5*maxSequence + len(sequences)
+        #fitness = maxSequence + (maxLeg1Height + maxLeg2Height + maxLeg3Height + maxLeg4Height)/4
+        #fitness = maxSequence
         
         #CREATES MANY SMALL HOPS
         # fitness = (3*n.average(sequences))*len(sequences)
@@ -223,7 +224,16 @@ class ROBOT:
         #FITNESS FUNCTION LEADS TO TIP TAPPING ROBOT THAT MAKES MANY SMALL JUMPS
         #fitness = maxSequence + len(indexes)
 
+        num_joints = p.getNumJoints(self.robotId)
+        f = open("QUADJOINTINFO", 'w')
+        for i in range(num_joints):
+            info = p.getJointInfo(self.robotId, i)
+            joint_name = info[1].decode('utf-8')
+            child_link_name = info[12].decode('utf-8')
+            f.write(f"Joint Index: {i}, Joint Name: {joint_name}, Child Link: {child_link_name}\n")
         
+        f.close()
+                
         
         f = open(f"tmp{self.solutionID}.txt", "w")
         f.write(f"{fitness}")
