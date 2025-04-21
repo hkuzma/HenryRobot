@@ -62,12 +62,13 @@ class ROBOT:
         
         linear_vel, angular_vel = p.getBaseVelocity(self.robotId)
         zlinvel = linear_vel[2]
+        self.zlinearvels.append(zlinvel)
         
         
         self.stateOfRightFist = p.getLinkState(self.robotId,3)
         self.positionOfRightFist = self.stateOfRightFist[0]
         self.RFPosition = self.positionOfRightFist[2]
-        self.RFPositions.append(self.zPosition)
+        self.RFPositions.append(self.RFPosition)
         
         self.stateOfLeftFist = p.getLinkState(self.robotId,1)
         self.positionOfLeftFist = self.stateOfLeftFist[0]
@@ -203,33 +204,76 @@ class ROBOT:
         #fitness is based on longest sequence where all links off ground
         #fitness maxes out around 3.25
         #===========================================================================================================
-        fitness = 10*maxSequence + maxHeight
-        # if fisttouch:
-        #     fitness = 0
-        f = open("SEQUENCE FITNESS.txt", 'a')
-        f.write(f"{'{'}\nMAX SEQUENCE: {maxSequence}\n MAX HEIGHT: {maxHeight}\n MIN RF HEIGHT: {minRFHeight}\n MIN LF HEIGHT: {minLFHeight}\n {'}'}")
-        f.close()
+        # fitness = 10*maxSequence + maxHeight
+        # # if fisttouch:
+        # #     fitness = 0
+        # f = open("SEQUENCE FITNESS.txt", 'a')
+        # f.write(f"{'{'}\nMAX SEQUENCE: {maxSequence}\n MAX HEIGHT: {maxHeight}\n MIN RF HEIGHT: {minRFHeight}\n MIN LF HEIGHT: {minLFHeight}\n {'}'}")
+        # f.close()
         
         
         #fitness based on maximum heights of two feet
+        #Robot stands on its very heels
         #===========================================================================================================
-        #fitness = maxRFHeight + maxLFHeight
+        fitness = min(maxRFHeight,maxLFHeight) * maxSequence
         
 
-        # f = open("FEET HEIGHT FITNESS, ", 'a')
-        # f.write(f"{'{\n'}MAX RF HEIGHT: {maxRFHeight}\n MAX LF HEIGHT: {maxLFHeight}")
-        # f.close()
+        f = open("FEET HEIGHT FITNESS, ", 'a')
+        f.write(f"{'{'}\nMAX RF HEIGHT: {maxRFHeight}\n MAX LF HEIGHT: {maxLFHeight}\n MAX SEQUENCE: {maxSequence}")
+        f.close()
         
+        #jumping is when i have the longest sequence where i keep getting higher 
+        #jumping is when i do this ^^ but fast
         #===========================================================================================================
+        chain = 0
+        chain_start = 0
+        chain_end = 0
+        maxChain = 0
+        max_chain_start = 0
+        max_chain_end = 0
+        for i in range(len(self.zPositions)):
+            if i>0:
+                if self.zPositions[i-1] < self.zPositions[i]:
+                    if chain == 0:
+                        chain_start = i
+                    chain +=1
+                    if chain > maxChain:
+                        maxChain = chain
+                        max_chain_start = chain_start
+                        max_chain_end = i
+                else:
+                    chain = 0
+        
+        jump_height = max(self.zPositions) - self.zPositions[0]
+     
+        
+        chainZVelocities = self.zlinearvels[max_chain_start:max_chain_end]
+        RFchainpos = self.RFPositions[max_chain_start:max_chain_end]
+        LFchainpos = self.LFPositions[max_chain_start:max_chain_end]
+        
+        
+        
+        fitness = (maxChain + min(max(RFchainpos), max(LFchainpos))) * max(chainZVelocities)
+        
+        for value in Torso:
+            if value == 1:
+                fitness -= 20
+        
+        f = open("VELOCITIES", 'a')
+        f.write(f"{'{'}\nMAX CHAIN: {maxChain}\n MAX VELOCITY {max(self.zlinearvels)}\n FITNESS: {fitness}\n{'}'}")
+        f.close()    
+        
+        #===============================================================================================================================
+        
         
         num_joints = p.getNumJoints(self.robotId)
 
-        f = open("JOINT INFO.txt", 'w')
+        #f = open("JOINT INFO.txt", 'w')
         
-        for i in range(num_joints):
-            joint_info = p.getJointInfo(self.robotId, i)
-            f.write(f"Index: {i}, Link Name: {joint_info[12].decode('utf-8')}\n")
-        f.close()
+        # for i in range(num_joints):
+        #     joint_info = p.getJointInfo(self.robotId, i)
+        #     f.write(f"Index: {i}, Link Name: {joint_info[12].decode('utf-8')}\n")
+        # f.close()
         
         #fitness = (-1*Torso + -1*BackLeg + -1*FrontLeg + -1*RightFist + -1*LeftFist)/5 + max(self.zPositions) + min(self.RFPositions) + min(self.LFPositions)
         # if min(self.zPositions) < 1:
@@ -241,6 +285,7 @@ class ROBOT:
 
         
         f = open(f"tmp{self.solutionID}.txt", "w")
+        
         f.write(f"{fitness}")
         f.close()
         os.system(f"rename tmp{self.solutionID}.txt fitness{self.solutionID}.txt")

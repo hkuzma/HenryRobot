@@ -66,8 +66,8 @@ class PARALELL_HILL_CLIMBER:
         print("==============================================================================")
 
     def Show_Best(self):
-        lowest = -1000
-        index = -1
+        lowest = -1000000000000000000000000000000000000000000000000000000000000
+        index = 0
         for parent in self.parents:
             if self.parents[parent].fitness>lowest:
                 lowest = self.parents[parent].fitness

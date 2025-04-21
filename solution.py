@@ -220,6 +220,7 @@ class SOLUTION:
         while not os.path.exists(f"fitness{str(self.myID)}.txt"):
             time.sleep(0.05)
             print("NOBODY")
+        time.sleep(0.01)
         
         f = open(f"fitness{str(self.myID)}.txt")
         self.fitness = float(f.read())
