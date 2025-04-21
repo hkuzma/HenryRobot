@@ -199,12 +199,28 @@ class ROBOT:
             else:
                 sequence = 0
         
-        
-        fitness = 10*maxSequence + maxHeight + minRFHeight + minLFHeight
+        #SEQUENCE FITNESS
+        #fitness is based on longest sequence where all links off ground
+        #fitness maxes out around 3.25
+        #===========================================================================================================
+        fitness = 10*maxSequence + maxHeight
         # if fisttouch:
         #     fitness = 0
+        f = open("SEQUENCE FITNESS.txt", 'a')
+        f.write(f"{'{'}\nMAX SEQUENCE: {maxSequence}\n MAX HEIGHT: {maxHeight}\n MIN RF HEIGHT: {minRFHeight}\n MIN LF HEIGHT: {minLFHeight}\n {'}'}")
+        f.close()
         
-        fitness = maxRFHeight + maxLFHeight
+        
+        #fitness based on maximum heights of two feet
+        #===========================================================================================================
+        #fitness = maxRFHeight + maxLFHeight
+        
+
+        # f = open("FEET HEIGHT FITNESS, ", 'a')
+        # f.write(f"{'{\n'}MAX RF HEIGHT: {maxRFHeight}\n MAX LF HEIGHT: {maxLFHeight}")
+        # f.close()
+        
+        #===========================================================================================================
         
         num_joints = p.getNumJoints(self.robotId)
 
@@ -221,6 +237,7 @@ class ROBOT:
         print(z_avg)
         print(max(self.zPositions))
         print(f"MIN: {min(self.zPositions)}")
+        print(self.zPositions[0])
 
         
         f = open(f"tmp{self.solutionID}.txt", "w")

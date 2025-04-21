@@ -24,6 +24,7 @@ class SOLUTION:
         self.myID = id
         self.weights = np.random.rand(c.numSensorNeurons,c.numMotorNeurons)
         self.weights = (self.weights *2 - 1)
+        self.fitness = -30
     
     def Create_World(self):
         pyrosim.Start_SDF("world.sdf")

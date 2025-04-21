@@ -3,6 +3,7 @@ import constants as c
 import copy
 import os
 import time
+import math
 
 class PARALELL_HILL_CLIMBER:
     
@@ -77,9 +78,19 @@ class PARALELL_HILL_CLIMBER:
         self.parents[index].Start_Simulation("GUI")
     
     def Evaluate(self, solutions):
-        for i in solutions:
+        halfway_index = 0
+        for i in range(0,math.floor(len(solutions)/2)):
             solutions[i].Start_Simulation("DIRECT")
-            #time.sleep(.01)
-        for i in solutions:
+            halfway_index +=1
+        for i in range(0,math.floor(len(solutions)/2)):
             solutions[i].Wait_For_Simulation_To_End("DIRECT")
+            #time.sleep(.01)
+        for i in range(halfway_index,len(solutions)):
+            solutions[i].Start_Simulation("DIRECT")
+
+        
+        for i in range(halfway_index,len(solutions)):
+            solutions[i].Wait_For_Simulation_To_End("DIRECT")
+
+
         
