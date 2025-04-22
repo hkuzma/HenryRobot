@@ -11,6 +11,7 @@ class MOTOR:
         self.jointName = jointName
         # motor.Prepare_To_Act(self)
         
+        self.desiredAngle = 0
         
         
         
@@ -38,6 +39,10 @@ class MOTOR:
                                     controlMode = p.POSITION_CONTROL,
                                     targetPosition = desiredAngle,
                                     maxForce = c.MAXFORCE)
+        self.desiredAngle = desiredAngle
+    
+    def Get_Value(self):
+        return self.desiredAngle
         # print(self.frequency)
         
     # def Save_Motor_Values(self):    

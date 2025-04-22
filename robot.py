@@ -6,7 +6,7 @@ from pyrosim.neuralNetwork import NEURAL_NETWORK
 import os
 import constants as c
 import numpy as n
-
+import math
 
 
 class ROBOT:
@@ -27,6 +27,9 @@ class ROBOT:
         
         os.system(f"del brain{self.solutionID}.nndf")
         
+        
+        
+        #FITNESS
         self.zPositions = []
         self.RFPositions = []
         self.LFPositions = []
@@ -36,6 +39,9 @@ class ROBOT:
         self.LeftFootZpositions = []
         self.RightFootZpositions = []
         self.zlinearvels = []
+        
+        self.backComps = []
+        self.frontComps = []
         
         
         
@@ -54,6 +60,13 @@ class ROBOT:
     def Think(self):
         self.nn.Update()
         
+        
+        backcomp = self.motors[ b'BackLeg_BackLowerLeg'].Get_Value()
+        self.backComps.append(backcomp)
+        
+        frontcomp = self.motors[ b'FrontLeg_FrontLowerLeg'].Get_Value()
+        self.frontComps.append(frontcomp)
+
         
         
         self.stateOfLinkZero, orn = p.getBasePositionAndOrientation(self.robotId)
@@ -99,9 +112,9 @@ class ROBOT:
             
     def Prepare_To_Act(self):
         self.motors = {}
-        
         for jointName in pyrosim.jointNamesToIndices:
             self.motors[jointName] = MOTOR(jointName)
+            
             
     def act(self, t):
         for neuronName in self.nn.Get_Neuron_Names():
@@ -204,65 +217,103 @@ class ROBOT:
         #fitness is based on longest sequence where all links off ground
         #fitness maxes out around 3.25
         #===========================================================================================================
-        # fitness = 10*maxSequence + maxHeight
-        # # if fisttouch:
-        # #     fitness = 0
-        # f = open("SEQUENCE FITNESS.txt", 'a')
-        # f.write(f"{'{'}\nMAX SEQUENCE: {maxSequence}\n MAX HEIGHT: {maxHeight}\n MIN RF HEIGHT: {minRFHeight}\n MIN LF HEIGHT: {minLFHeight}\n {'}'}")
-        # f.close()
+        fitness = 10*maxSequence + maxHeight
+        # if fisttouch:
+        #     fitness = 0
+        f = open("SEQUENCE FITNESS.txt", 'a')
+        f.write(f"{'{'}\nMAX SEQUENCE: {maxSequence}\n MAX HEIGHT: {maxHeight}\n MIN RF HEIGHT: {minRFHeight}\n MIN LF HEIGHT: {minLFHeight}\n {'}'}")
+        f.close()
         
         
         #fitness based on maximum heights of two feet
         #Robot stands on its very heels
         #===========================================================================================================
-        fitness = min(maxRFHeight,maxLFHeight) * maxSequence
+        # fitness = min(maxRFHeight,maxLFHeight) * maxSequence
         
 
-        f = open("FEET HEIGHT FITNESS, ", 'a')
-        f.write(f"{'{'}\nMAX RF HEIGHT: {maxRFHeight}\n MAX LF HEIGHT: {maxLFHeight}\n MAX SEQUENCE: {maxSequence}")
-        f.close()
+        # f = open("FEET HEIGHT FITNESS, ", 'a')
+        # f.write(f"{'{'}\nMAX RF HEIGHT: {maxRFHeight}\n MAX LF HEIGHT: {maxLFHeight}\n MAX SEQUENCE: {maxSequence}")
+        # f.close()
         
         #jumping is when i have the longest sequence where i keep getting higher 
         #jumping is when i do this ^^ but fast
         #===========================================================================================================
+
+
+        chain_values = []
+        chain_indexes = []
+        
+        
+        #CHAIN GOING UP======================================>
         chain = 0
-        chain_start = 0
-        chain_end = 0
+        chain_start =0 
         maxChain = 0
         max_chain_start = 0
         max_chain_end = 0
-        for i in range(len(self.zPositions)):
-            if i>0:
-                if self.zPositions[i-1] < self.zPositions[i]:
-                    if chain == 0:
-                        chain_start = i
-                    chain +=1
-                    if chain > maxChain:
-                        maxChain = chain
-                        max_chain_start = chain_start
-                        max_chain_end = i
-                else:
+        for i in range(1,len(self.zPositions)):
+            if self.zPositions[i-1] < self.zPositions[i]:
+                chain_values.append(self.zPositions[i])
+                chain_indexes.append(i)
+        
+        
+        for i in range(1,len(chain_indexes)):
+            if chain_indexes[i]-1 == chain_indexes[i-1]:
+                chain_start = i
+                chain +=1
+            else:
+                if chain > maxChain:
+                    maxChain = chain
+                    max_chain_start = chain_start
+                    max_chain_end = i
+                    
                     chain = 0
+                    
+                
         
         jump_height = max(self.zPositions) - self.zPositions[0]
      
+        deltaZ = self.zPositions[max_chain_end] - self.zPositions[max_chain_start]
         
         chainZVelocities = self.zlinearvels[max_chain_start:max_chain_end]
         RFchainpos = self.RFPositions[max_chain_start:max_chain_end]
         LFchainpos = self.LFPositions[max_chain_start:max_chain_end]
         
         
+        #longest time the torso goes up + highest value for both feet during that time * highest upward velocity during that time 
+        # * longest sequence off the ground + reward for getting off ground
+        # fitness = (maxChain + 5*min(max(RFchainpos), max(LFchainpos))) + max(chainZVelocities) * (5*maxSequence) + 10*deltaZ
         
-        fitness = (maxChain + min(max(RFchainpos), max(LFchainpos))) * max(chainZVelocities)
         
-        for value in Torso:
-            if value == 1:
-                fitness -= 20
+        #deltaZ = highest displacement during chain
+        #POTENTIAL SOLUTION TO MAKE VERTICAL GROWTH?
+        #fitness = deltaZ * max(chainZVelocities) * 1+(5*maxSequence)
+        
+     
         
         f = open("VELOCITIES", 'a')
         f.write(f"{'{'}\nMAX CHAIN: {maxChain}\n MAX VELOCITY {max(self.zlinearvels)}\n FITNESS: {fitness}\n{'}'}")
         f.close()    
         
+        #KNEE COMPRESSION BONUS
+        b'BackLeg_BackLowerLeg'
+        b'FrontLeg_FrontLowerLeg'
+        
+        
+        
+        print(f"COMPRESSION = {max(self.frontComps)}")
+        fitness = deltaZ
+
+        fitness += abs(max(self.frontComps[0:max_chain_start]))
+        fitness += abs(max(self.backComps[0:max_chain_start]))
+        fitness += ((minHeight-2.75)*-1) * (maxHeight-2.75)
+        
+        for value in Torso:
+            if value == 1:
+                fitness -= .1
+            else:
+                fitness += .1
+        
+        #THE FULLY UPRIGHT BIPED CAN GET OFF THE GROUND
         #===============================================================================================================================
         
         
@@ -292,11 +343,7 @@ class ROBOT:
         
 
 
-                
-        
-            
-         
-    
+          
             
             
             
