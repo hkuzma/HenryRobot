@@ -33,6 +33,8 @@ class ROBOT:
         self.LeftLowerLegZpositions = []
         self.RightLowerLegZpositions = []
         
+        self.zlinearvels = []
+        
         
         
         
@@ -58,6 +60,10 @@ class ROBOT:
         self.zPosition = self.positionOfLinkZero[2]
         self.zPositions.append(self.zPosition)
         #self.nn.Print()   
+        
+        linear_vel, angular_vel = p.getBaseVelocity(self.robotId)
+        zlinvel = linear_vel[2]
+        self.zlinearvels.append(zlinvel)
         
         self.stateOfBackLowerLeg = p.getLinkState(self.robotId,1)
         self.positionOfBackLowerLeg = self.stateOfBackLowerLeg[0]
@@ -213,8 +219,157 @@ class ROBOT:
       
                 
         
-        
+        #
         fitness = 5*maxSequence + len(sequences)
+        
+        
+        
+        
+        
+        #===================================================================================================================
+        chain_values = []
+        chain_indexes = []
+        chain = 0
+        chain_start =0 
+        maxChain = 0
+        max_chain_start = 0
+        max_chain_end = 0
+        for i in range(1,len(self.zPositions)):
+            if self.zPositions[i-1] < self.zPositions[i]:
+                chain_values.append(self.zPositions[i])
+                chain_indexes.append(i)
+        
+        
+        for i in range(1,len(chain_indexes)):
+            if chain_indexes[i]-1 == chain_indexes[i-1]:
+                chain_start = i
+                chain +=1
+            else:
+                if chain > maxChain:
+                    maxChain = chain
+                    max_chain_start = chain_start
+                    max_chain_end = i
+                    
+                    chain = 0
+        
+        deltaZ = self.zPositions[max_chain_end] - self.zPositions[max_chain_start]
+
+        #1
+        #Doesn't Jump Well
+        fitness = max(self.zlinearvels) * deltaZ + maxHeight
+        
+        #2
+        #Jumps
+        #Holds up
+        fitness = maxSequence * maxChain
+        
+        #3
+        #Robot Gets Real Low
+        fitness = maxSequence + maxChain * deltaZ
+        
+        #4
+        #Almost Jumps
+        fitness = min(maxLeg1Height, maxLeg2Height, maxLeg3Height, maxLeg4Height, maxHeight) * maxSequence
+        
+        #5
+        #Small Jumps
+        fitness = min(maxLeg1Height, maxLeg2Height, maxLeg3Height, maxLeg4Height, maxHeight) * maxSequence * maxChain
+        
+        #6
+        #Bouncy but fails to jump        
+        fitness = 5*maxSequence + len(sequences)
+        
+        #7
+        #Does not jump
+        fitness = min(maxLeg1Height, maxLeg2Height, maxLeg3Height, maxLeg4Height, maxHeight) * maxChain
+        
+        #8
+        #Many Small Hops
+        fitness = deltaZ * maxChain * maxSequence
+        
+        #9
+        #1 solid jump + Several small jumps
+        #less consistent
+        fitness = max(self.zlinearvels) * maxChain * maxSequence
+        
+       
+        total = 0
+        for value in self.zlinearvels:
+            value = abs(value)
+            total += value
+        
+        avg = total/len(self.zlinearvels)
+        
+        #10
+        #Maximizes height once and stays standing as tall as possible
+        #Subsequent run --> Freezes after some movement --> Possibly avoiding any downwards velocity
+        fitness = n.average(self.zlinearvels) * maxChain * maxSequence
+        
+        #11
+        #By using the absolute value of linear velocity, we get some hops proving that the regular linear velocity prioritizes not going back down.
+        fitness = avg * maxChain * maxSequence
+
+        #12
+        #revisiting number 1 using abs value of velocity shows that the problem there lies in the weight of delta z
+        fitness = avg * deltaZ + maxHeight
+        
+        #13
+        #Reducing the weight of deltaZ gives the best jump so far
+        #on a second run, this jump failed to replicate --> Possible good luck???
+        #maybe needs to run for longer?
+        #running for longer could replicate better jumps, but the first time may have been a fluke.
+        fitness = avg *maxHeight + deltaZ
+        
+        #14
+        #performs significantly worse than above
+        fitness = avg + maxHeight * deltaZ 
+        
+        #15
+        #Performs better than above --> higher overall movement, but fails to jump on first run
+        fitness = avg * maxHeight 
+        
+        #16
+        #very effective at creating many jumps
+        fitness = avg *maxHeight + maxChain * maxSequence
+        
+        
+
+
+        #More sideways movement than upwards
+        fitness = avg * maxChain * maxSequence
+        
+        #Jumps Down
+        fitness = avg * maxChain * maxSequence + maxHeight*deltaZ
+        
+        #jumps but not high
+        fitness = avg *maxHeight + deltaZ * maxChain
+        
+        
+        
+        fitness = avg *maxHeight + deltaZ
+
+        
+        
+        
+
+
+
+
+
+
+        #BEST
+        #2
+        #9
+        #13
+
+        
+        
+
+        
+        
+        
+        
+        #===================================================================================================================
         #fitness = maxSequence + (maxLeg1Height + maxLeg2Height + maxLeg3Height + maxLeg4Height)/4
         #fitness = maxSequence
         
