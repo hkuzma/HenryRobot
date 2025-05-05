@@ -406,8 +406,48 @@ class ROBOT:
         
         
         
+        
+        
+        
+        
+        
+        
         #THE FULLY UPRIGHT BIPED CAN GET OFF THE GROUND
         #===============================================================================================================================
+        
+   
+        
+        avgZPosies = []
+        for index in range(0, len(self.LeftLowerLegZpositions)):
+            posAvg = (self.LeftLowerLegZpositions[index]* self.RightLowerLegZpositions[index]*self.LeftFootZpositions[index]*self.RightFootZpositions[index])**.25
+            avgZPosies.append(posAvg)
+        
+        deltaLeg = n.average(avgZPosies)
+
+        
+        fitness = 5*maxSequence + deltaLeg + (maxHeight)
+        
+        indexes = []
+        numFrames1 =0
+        numFrames2 = 0
+
+       
+     
+  
+        #FOOT
+        LeftFoot = self.sensors['BackFoot'].Get_Values()
+        RightFoot = self.sensors['FrontFoot'].Get_Values()
+        for i in range(len(Torso)):
+            if Torso[i] == 1:
+                fitness -=1
+            if LeftUpperArm[i]==1 or RightUpperArm[i] == 1 or LeftUpperLeg[i]==1 or RightUpperLeg[i]==1:
+                fitness -=.5
+            if LeftFoot[i] == 1 or RightFoot[i] == 1:
+                pass
+            else: 
+                fitness += 1
+            
+        
         
         
         num_joints = p.getNumJoints(self.robotId)

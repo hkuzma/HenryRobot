@@ -29,15 +29,53 @@ class PARALELL_HILL_CLIMBER:
     
     def Evolve(self):
         self.Evaluate(self.parents)
-        
+        num = 0
         for currentGeneration in range(c.numberOfGenerations):
-            self.Evolve_For_One_Generation()
+            self.Evolve_For_One_Generation(num)
+            num +=1
+            
+    def write_fitness(self, gen):
+        g = open("Generational BEST Fitness.txt", "a")
+        f = open("Generational Fitness.txt", "a")
+        fitnesses = open("A.txt", 'a')
+        
+        if gen == 0:
+            f.write("\nNEW RUN\n")
+            fitnesses.write("\nNEW RUN\n")
+            g.write("\nNEW RUN\n")
+            
+        lowest = -1000
+        index = -1
+        for parent in self.parents:
+            if self.parents[parent].fitness>lowest:
+                lowest = self.parents[parent].fitness
+                index = parent        
+
+            
+        g.write(f"Generation {gen} : {self.parents[index].fitness}\n")
+        g.close()
+
+        
+        generationFitness = 0
+        numParents = 0
+        for parent in self.parents:
+            generationFitness += self.parents[parent].fitness
+            fitnesses.write(f"{self.parents[parent].fitness} \n")
+            numParents +=1
+        
+        avgGenerationFitness = generationFitness/numParents
+            
+        f.write(f"Generation {gen}: {avgGenerationFitness}\n")
+        f.close()
+        fitnesses.close()
                 
             
-    def Evolve_For_One_Generation(self):
+    def Evolve_For_One_Generation(self, gen):
         self.Spawn()
         self.Mutate()
         self.Evaluate(self.children)
+        self.write_fitness(gen)
+
         self.Print()
         self.Select()
 
