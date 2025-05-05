@@ -6,7 +6,7 @@ from pyrosim.neuralNetwork import NEURAL_NETWORK
 import os
 import constants as c
 import numpy as n
-
+from statistics import mean
 
 
 class ROBOT:
@@ -121,7 +121,23 @@ class ROBOT:
         maxLeg3Height = max(self.LeftLowerLegZpositions)
         maxLeg4Height = max(self.RightLowerLegZpositions)
         
+        avgLegZPosies = []
+        for index in range(0, len(self.BackLowerLegZpositions)):
+            posAvg = (self.BackLowerLegZpositions[index]*self.FrontLowerLegZpositions[index]*self.LeftLowerLegZpositions[index]*self.RightLowerLegZpositions[index])**.25
+            avgLegZPosies.append(posAvg)
+            
+        minLeg1Height = min(self.BackLowerLegZpositions)
+        minLeg2Height = min(self.FrontLowerLegZpositions)
+        minLeg3Height = min(self.LeftLowerLegZpositions)
+        minLeg4Height = min(self.RightLowerLegZpositions)
+        
+        avgLeg1Height = n.average(self.BackLowerLegZpositions)
+        avgLeg2Height = n.average(self.FrontLowerLegZpositions)
+        avgLeg3Height = n.average(self.LeftLowerLegZpositions)
+        avgLeg4Height = n.average(self.RightLowerLegZpositions)
+        
         maxHeight = max(self.zPositions)
+        minHeight = min(self.zPositions)
         
         
 
@@ -203,9 +219,14 @@ class ROBOT:
         maxSequence = 0      
         sequence = 0
         sequences = []
+        SQjump = 0
         for i in range(1, len(indexes)):
+            
             if indexes[i] == indexes[i-1] + 1:
                 sequence += 1
+                if self.zPositions[i]>SQjump:
+                    SQjump == self.zPositions
+                    
             elif sequence > maxSequence:
                 maxSequence = sequence
                 sequences.append(sequence)
@@ -347,6 +368,48 @@ class ROBOT:
         
         
         fitness = avg *maxHeight + deltaZ
+        
+        
+        #FITNESS FUNCTION WILL USE SEQUENCE
+        deltaLeg = (maxLeg1Height- minLeg1Height +  maxLeg2Height- minLeg2Height +  maxLeg3Height- minLeg3Height +  maxLeg4Height- minLeg4Height)/4
+        
+        deltaLeg = (avgLeg1Height *  avgLeg2Height * avgLeg3Height * avgLeg4Height)**.25
+
+        deltaLeg = n.average(avgLegZPosies)
+        
+        fitness = maxSequence * (maxHeight-minHeight)
+        
+        
+        
+        #VERY EFFECTIVE FITNESS FOR A ROBOT THAT HOPS MANY TIMES
+        fitness = 5*maxSequence + deltaLeg + (maxHeight)
+        
+        indexes = []
+        numFrames1 =0
+        numFrames2 = 0
+        for i in range(len(BackFoot)):
+            if BackFoot[i] == -1 and FrontFoot[i] == -1 and LeftFoot[i] == -1 and RightFoot[i] == -1:
+                pass
+            if BackFoot[i] == 1 and FrontFoot[i] == 1 and LeftFoot[i] == -1 and RightFoot[i] == -1:
+                numFrames1 +=1
+            else:
+                numFrames2 = 0
+                
+            if BackFoot[i] == -1 and FrontFoot[i] == -1 and LeftFoot[i] == 1 and RightFoot[i] == 1:
+                numFrames2 +=1
+            else:
+                numFrames2 =0
+            if numFrames1 >10:
+                fitness -=2
+            if numFrames2 > 10:
+                fitness-=2
+                
+           
+                
+        
+            
+
+
 
         
         

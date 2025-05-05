@@ -21,7 +21,7 @@ GRAVITY_Z = -9.8
 NUMPY_START = 0 
 NUMPY_STOP =  2 * numpy.pi
 
-numberOfGenerations = 20
+numberOfGenerations = 100
 
 populationSize = 10
 

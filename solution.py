@@ -144,10 +144,6 @@ class SOLUTION:
         self.fitness = float(f.read())
         f.close()
         
-        f = open("fitnesses.txt", 'a')
-        f.write(f"{self.fitness} \n")
-        f.close()
-        
         os.system(f"del fitness{str(self.myID)}.txt")
     
         
