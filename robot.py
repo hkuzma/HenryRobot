@@ -303,15 +303,108 @@ class ROBOT:
         print(f"COMPRESSION = {max(self.frontComps)}")
         fitness = deltaZ
 
-        fitness += abs(max(self.frontComps[0:max_chain_start]))
-        fitness += abs(max(self.backComps[0:max_chain_start]))
-        fitness += ((minHeight-2.75)*-1) * (maxHeight-2.75)
+        # fitness += abs(max(self.frontComps[0:max_chain_start]))
+        # fitness += abs(max(self.backComps[0:max_chain_start]))
+        # fitness += ((minHeight-2.75)*-1) * (maxHeight-2.75)
         
         for value in Torso:
             if value == 1:
                 fitness -= .1
             else:
                 fitness += .1
+                
+                
+                
+         #1
+        #Doesn't Jump Well
+        fitness = max(self.zlinearvels) * deltaZ + maxHeight
+        
+        #2
+        #Jumps
+        #Holds up
+        fitness = maxSequence * maxChain
+        
+        #3
+        #Robot Gets Real Low
+        fitness = maxSequence + maxChain * deltaZ
+        
+    
+        
+        
+        
+        #6
+        #Bouncy but fails to jump        
+        fitness = 5*maxSequence + len(sequences)
+    
+        #8
+        #Many Small Hops
+        fitness = deltaZ * maxChain * maxSequence
+        
+        #9
+        #1 solid jump + Several small jumps
+        #less consistent
+        fitness = max(self.zlinearvels) * maxChain * maxSequence
+        
+       
+        total = 0
+        for value in self.zlinearvels:
+            value = abs(value)
+            total += value
+        
+        avg = total/len(self.zlinearvels)
+        
+        #10
+        #Maximizes height once and stays standing as tall as possible
+        #Subsequent run --> Freezes after some movement --> Possibly avoiding any downwards velocity
+        fitness = n.average(self.zlinearvels) * maxChain * maxSequence
+        
+        #11
+        #By using the absolute value of linear velocity, we get some hops proving that the regular linear velocity prioritizes not going back down.
+        fitness = avg * maxChain * maxSequence
+
+        #12
+        #revisiting number 1 using abs value of velocity shows that the problem there lies in the weight of delta z
+        fitness = avg * deltaZ + maxHeight
+        
+        #13
+        #Reducing the weight of deltaZ gives the best jump so far
+        #on a second run, this jump failed to replicate --> Possible good luck???
+        #maybe needs to run for longer?
+        #running for longer could replicate better jumps, but the first time may have been a fluke.
+        fitness = avg *maxHeight + deltaZ
+        
+        #14
+        #performs significantly worse than above
+        fitness = avg + maxHeight * deltaZ 
+        
+        #15
+        #Performs better than above --> higher overall movement, but fails to jump on first run
+        fitness = avg * maxHeight 
+        
+        #16
+        #very effective at creating many jumps
+        fitness = avg *maxHeight + maxChain * maxSequence
+        
+        
+
+
+        #More sideways movement than upwards
+        fitness = avg * maxChain * maxSequence
+        
+        #Jumps Down
+        fitness = avg * maxChain * maxSequence + maxHeight*deltaZ
+        
+        #jumps but not high
+        fitness = n.average(self.zlinearvels) * maxHeight + deltaZ * maxChain
+        
+        
+        #fitness = min(abs(max(self.frontComps[0:max_chain_start])), abs(max(self.backComps[0:max_chain_start]))) * maxChain + avg
+        
+        
+        #fitness = maxChain * avg + deltaZ + min(abs(max(self.frontComps[0:max_chain_start])), abs(max(self.backComps[0:max_chain_start])))
+      
+        
+        
         
         #THE FULLY UPRIGHT BIPED CAN GET OFF THE GROUND
         #===============================================================================================================================
