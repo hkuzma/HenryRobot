@@ -21,11 +21,11 @@ GRAVITY_Z = -9.8
 NUMPY_START = 0 
 NUMPY_STOP =  2 * numpy.pi
 
-numberOfGenerations = 10
+numberOfGenerations = 100
 
 populationSize = 10
 
-numSensorNeurons = 11
-numMotorNeurons =8
+numSensorNeurons = 7
+numMotorNeurons =6
 
 motorJointRange = .4

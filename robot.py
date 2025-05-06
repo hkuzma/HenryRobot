@@ -31,8 +31,7 @@ class ROBOT:
         
         #FITNESS
         self.zPositions = []
-        self.RFPositions = []
-        self.LFPositions = []
+       
         
         self.LeftLowerLegZpositions = []
         self.RightLowerLegZpositions = []
@@ -78,32 +77,32 @@ class ROBOT:
         self.zlinearvels.append(zlinvel)
         
         
-        self.stateOfRightFist = p.getLinkState(self.robotId,3)
-        self.positionOfRightFist = self.stateOfRightFist[0]
-        self.RFPosition = self.positionOfRightFist[2]
-        self.RFPositions.append(self.RFPosition)
+        # self.stateOfRightFist = p.getLinkState(self.robotId,3)
+        # self.positionOfRightFist = self.stateOfRightFist[0]
+        # self.RFPosition = self.positionOfRightFist[2]
+        # self.RFPositions.append(self.RFPosition)
         
-        self.stateOfLeftFist = p.getLinkState(self.robotId,1)
-        self.positionOfLeftFist = self.stateOfLeftFist[0]
-        self.LFPosition = self.positionOfLeftFist[2]
-        self.LFPositions.append(self.LFPosition)
+        # self.stateOfLeftFist = p.getLinkState(self.robotId,1)
+        # self.positionOfLeftFist = self.stateOfLeftFist[0]
+        # self.LFPosition = self.positionOfLeftFist[2]
+        # self.LFPositions.append(self.LFPosition)
 
-        self.stateOfLeftLowerLeg = p.getLinkState(self.robotId,7)
+        self.stateOfLeftLowerLeg = p.getLinkState(self.robotId,2)
         self.positionOfLeftLowerLeg = self.stateOfLeftLowerLeg[0]
         self.LeftLowerLegZpos = self.positionOfLeftLowerLeg[2]
         self.LeftLowerLegZpositions.append(self.LeftLowerLegZpos)
 
-        self.stateOfRightLowerLeg = p.getLinkState(self.robotId,8)
+        self.stateOfRightLowerLeg = p.getLinkState(self.robotId,3)
         self.positionOfRightLowerLeg = self.stateOfRightLowerLeg[0] 
         self.RightLowerLegZpos = self.positionOfRightLowerLeg[2]
         self.RightLowerLegZpositions.append(self.RightLowerLegZpos)
         
-        self.stateOfLeftFoot = p.getLinkState(self.robotId, 6)
+        self.stateOfLeftFoot = p.getLinkState(self.robotId, 4)
         self.positionOfLeftFoot = self.stateOfLeftFoot[0] 
         self.LeftFootZpos = self.positionOfLeftFoot[2]
         self.LeftFootZpositions.append(self.RightLowerLegZpos)
         
-        self.stateOfRightFoot = p.getLinkState(self.robotId, 9)
+        self.stateOfRightFoot = p.getLinkState(self.robotId, 5)
         self.positionOfRightFoot = self.stateOfRightFoot[0] 
         self.RightFootZpos = self.positionOfRightFoot[2]
         self.RightFootZpositions.append(self.RightFootZpos)
@@ -129,19 +128,10 @@ class ROBOT:
         self.basePositionAndOrientation = p.getBasePositionAndOrientation(self.robotId)
         
         
-        #print(self.nn.Get_Neuron_Names())
-        5/6
-        #print(self.sensors.keys())
+      
         
-        #UPPPER ARM
-        LeftUpperArm = self.sensors["LeftUpperArm"].Get_Values()
-        RightUpperArm = self.sensors["RightUpperArm"].Get_Values()
-        #LOWER ARM
-        # LeftLowerArm = self.sensors["LeftLowerArm"].Get_Values()
-        # RightLowerArm = self.sensors["RightLowerArm"].Get_Values()
-        #FIST
-        RightFist = self.sensors["RightFist"].Get_Values()
-        LeftFist = self.sensors["LeftFist"].Get_Values()
+  
+
         #TORSO
         Torso = self.sensors["Torso"].Get_Values()
         #UPPER LEG
@@ -164,13 +154,9 @@ class ROBOT:
         minHeight = min(self.zPositions)
         avgHeight = n.average(self.zPositions)
         
-        maxLFHeight = max(self.LFPositions)
-        minLFHeight = min(self.LFPositions)
-        avgLFHeight = n.average(self.LFPositions)
+
         
-        maxRFHeight = max(self.RFPositions)
-        minRFHeight = min(self.RFPositions)
-        avgRFHeight = n.average(self.RFPositions)
+     
         
         self.positionOfLinkZero = self.stateOfLinkZero[0]
         self.basePosition = self.basePositionAndOrientation[0]
@@ -189,13 +175,11 @@ class ROBOT:
         
         fitness = 0
         indexes = []
-        fisttouch = False
         for i in range(len(LeftFoot)):
-            if LeftFoot[i] == -1 and RightFoot[i] == -1 and LeftLowerLeg[i] == -1 and RightLowerLeg[i] == -1 and Torso[i] ==-1 and LeftFist[i] == -1 and RightFist[i] == -1:
+            if LeftFoot[i] == -1 and RightFoot[i] == -1 and LeftLowerLeg[i] == -1 and RightLowerLeg[i] == -1 and Torso[i] ==-1:
                 fitness += 1
                 indexes.append(i)
-            if RightFist[i] == 1 or LeftFist[i] == 1:
-                fisttouch = True
+       
         
         maxSequence = 0      
         sequence = 0
@@ -218,65 +202,14 @@ class ROBOT:
         #fitness maxes out around 3.25
         #===========================================================================================================
         fitness = 10*maxSequence + maxHeight
-        # if fisttouch:
-        #     fitness = 0
-        f = open("SEQUENCE FITNESS.txt", 'a')
-        f.write(f"{'{'}\nMAX SEQUENCE: {maxSequence}\n MAX HEIGHT: {maxHeight}\n MIN RF HEIGHT: {minRFHeight}\n MIN LF HEIGHT: {minLFHeight}\n {'}'}")
-        f.close()
-        
-        
-        #fitness based on maximum heights of two feet
-        #Robot stands on its very heels
-        #===========================================================================================================
-        # fitness = min(maxRFHeight,maxLFHeight) * maxSequence
-        
+  
 
-        # f = open("FEET HEIGHT FITNESS, ", 'a')
-        # f.write(f"{'{'}\nMAX RF HEIGHT: {maxRFHeight}\n MAX LF HEIGHT: {maxLFHeight}\n MAX SEQUENCE: {maxSequence}")
-        # f.close()
-        
-        #jumping is when i have the longest sequence where i keep getting higher 
-        #jumping is when i do this ^^ but fast
-        #===========================================================================================================
-
-
-        chain_values = []
-        chain_indexes = []
-        
-        
-        #CHAIN GOING UP======================================>
-        chain = 0
-        chain_start =0 
-        maxChain = 0
-        max_chain_start = 0
-        max_chain_end = 0
-        for i in range(1,len(self.zPositions)):
-            if self.zPositions[i-1] < self.zPositions[i]:
-                chain_values.append(self.zPositions[i])
-                chain_indexes.append(i)
-        
-        
-        for i in range(1,len(chain_indexes)):
-            if chain_indexes[i]-1 == chain_indexes[i-1]:
-                chain_start = i
-                chain +=1
-            else:
-                if chain > maxChain:
-                    maxChain = chain
-                    max_chain_start = chain_start
-                    max_chain_end = i
-                    
-                    chain = 0
+ 
                     
                 
         
-        jump_height = max(self.zPositions) - self.zPositions[0]
-     
-        deltaZ = self.zPositions[max_chain_end] - self.zPositions[max_chain_start]
-        
-        chainZVelocities = self.zlinearvels[max_chain_start:max_chain_end]
-        RFchainpos = self.RFPositions[max_chain_start:max_chain_end]
-        LFchainpos = self.LFPositions[max_chain_start:max_chain_end]
+      
+ 
         
         
         #longest time the torso goes up + highest value for both feet during that time * highest upward velocity during that time 
@@ -290,139 +223,27 @@ class ROBOT:
         
      
         
-        f = open("VELOCITIES", 'a')
-        f.write(f"{'{'}\nMAX CHAIN: {maxChain}\n MAX VELOCITY {max(self.zlinearvels)}\n FITNESS: {fitness}\n{'}'}")
-        f.close()    
+        
         
         #KNEE COMPRESSION BONUS
         b'BackLeg_BackLowerLeg'
         b'FrontLeg_FrontLowerLeg'
         
         
-        
-        print(f"COMPRESSION = {max(self.frontComps)}")
-        fitness = deltaZ
+   
 
-        # fitness += abs(max(self.frontComps[0:max_chain_start]))
-        # fitness += abs(max(self.backComps[0:max_chain_start]))
-        # fitness += ((minHeight-2.75)*-1) * (maxHeight-2.75)
+  
         
-        for value in Torso:
-            if value == 1:
-                fitness -= .1
-            else:
-                fitness += .1
-                
-                
-                
-         #1
-        #Doesn't Jump Well
-        fitness = max(self.zlinearvels) * deltaZ + maxHeight
-        
-        #2
-        #Jumps
-        #Holds up
-        fitness = maxSequence * maxChain
-        
-        #3
-        #Robot Gets Real Low
-        fitness = maxSequence + maxChain * deltaZ
-        
-    
-        
-        
-        
-        #6
-        #Bouncy but fails to jump        
-        fitness = 5*maxSequence + len(sequences)
-    
-        #8
-        #Many Small Hops
-        fitness = deltaZ * maxChain * maxSequence
-        
-        #9
-        #1 solid jump + Several small jumps
-        #less consistent
-        fitness = max(self.zlinearvels) * maxChain * maxSequence
-        
-       
-        total = 0
-        for value in self.zlinearvels:
-            value = abs(value)
-            total += value
-        
-        avg = total/len(self.zlinearvels)
-        
-        #10
-        #Maximizes height once and stays standing as tall as possible
-        #Subsequent run --> Freezes after some movement --> Possibly avoiding any downwards velocity
-        fitness = n.average(self.zlinearvels) * maxChain * maxSequence
-        
-        #11
-        #By using the absolute value of linear velocity, we get some hops proving that the regular linear velocity prioritizes not going back down.
-        fitness = avg * maxChain * maxSequence
-
-        #12
-        #revisiting number 1 using abs value of velocity shows that the problem there lies in the weight of delta z
-        fitness = avg * deltaZ + maxHeight
-        
-        #13
-        #Reducing the weight of deltaZ gives the best jump so far
-        #on a second run, this jump failed to replicate --> Possible good luck???
-        #maybe needs to run for longer?
-        #running for longer could replicate better jumps, but the first time may have been a fluke.
-        fitness = avg *maxHeight + deltaZ
-        
-        #14
-        #performs significantly worse than above
-        fitness = avg + maxHeight * deltaZ 
-        
-        #15
-        #Performs better than above --> higher overall movement, but fails to jump on first run
-        fitness = avg * maxHeight 
-        
-        #16
-        #very effective at creating many jumps
-        fitness = avg *maxHeight + maxChain * maxSequence
-        
-        
-
-
-        #More sideways movement than upwards
-        fitness = avg * maxChain * maxSequence
-        
-        #Jumps Down
-        fitness = avg * maxChain * maxSequence + maxHeight*deltaZ
-        
-        #jumps but not high
-        fitness = n.average(self.zlinearvels) * maxHeight + deltaZ * maxChain
-        
-        
-        #fitness = min(abs(max(self.frontComps[0:max_chain_start])), abs(max(self.backComps[0:max_chain_start]))) * maxChain + avg
-        
-        
-        #fitness = maxChain * avg + deltaZ + min(abs(max(self.frontComps[0:max_chain_start])), abs(max(self.backComps[0:max_chain_start])))
-      
-        
-        
-        
-        
-        
-        
-        
-        
-        
+   
         #THE FULLY UPRIGHT BIPED CAN GET OFF THE GROUND
         #===============================================================================================================================
         
-   
+        avgLegZPosies = []
+        for index in range(0, len(self.LeftFootZpositions)):
+            posAvg = (self.LeftFootZpositions[index] * self.RightFootZpositions[index])**.25
+            avgLegZPosies.append(posAvg)
         
-        avgZPosies = []
-        for index in range(0, len(self.LeftLowerLegZpositions)):
-            posAvg = (self.LeftLowerLegZpositions[index]* self.RightLowerLegZpositions[index]*self.LeftFootZpositions[index]*self.RightFootZpositions[index])**.25
-            avgZPosies.append(posAvg)
-        
-        deltaLeg = n.average(avgZPosies)
+        deltaLeg = n.average(avgLegZPosies)
 
         
         fitness = 5*maxSequence + deltaLeg + (maxHeight)
@@ -430,24 +251,6 @@ class ROBOT:
         indexes = []
         numFrames1 =0
         numFrames2 = 0
-
-       
-     
-  
-        #FOOT
-        LeftFoot = self.sensors['BackFoot'].Get_Values()
-        RightFoot = self.sensors['FrontFoot'].Get_Values()
-        for i in range(len(Torso)):
-            if Torso[i] == 1:
-                fitness -=1
-            if LeftUpperArm[i]==1 or RightUpperArm[i] == 1 or LeftUpperLeg[i]==1 or RightUpperLeg[i]==1:
-                fitness -=.5
-            if LeftFoot[i] == 1 or RightFoot[i] == 1:
-                pass
-            else: 
-                fitness += 1
-            
-        
         
         
         num_joints = p.getNumJoints(self.robotId)
@@ -469,11 +272,16 @@ class ROBOT:
 
         
         f = open(f"tmp{self.solutionID}.txt", "w")
-        
         f.write(f"{fitness}")
         f.close()
         os.system(f"rename tmp{self.solutionID}.txt fitness{self.solutionID}.txt")
         
+        f = open(f"tmp{self.solutionID}.txt", "w")
+        f.write(f"{maxHeight-self.zPositions[0]}")
+        f.close()
+        os.system(f"rename tmp{self.solutionID}.txt height{self.solutionID}.txt")
+        
+      
 
 
           

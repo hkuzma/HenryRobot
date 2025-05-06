@@ -8,6 +8,7 @@ phc = PARALELL_HILL_CLIMBER()
 
 phc.Evolve()
 
+input = input("show best? ")
 phc.Show_Best()
     
 

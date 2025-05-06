@@ -28,6 +28,8 @@ class PARALELL_HILL_CLIMBER:
         
     
     def Evolve(self):
+        self.parents[0].Start_Simulation("GUI")
+
         self.Evaluate(self.parents)
         num = 0
         for currentGeneration in range(c.numberOfGenerations):
@@ -35,6 +37,8 @@ class PARALELL_HILL_CLIMBER:
             num +=1
             
     def write_fitness(self, gen):
+        h = open("Generational AVG Height.txt", 'a')
+        i = open("Generational Best Height.txt",'a')
         g = open("Generational BEST Fitness.txt", "a")
         f = open("Generational Fitness.txt", "a")
         fitnesses = open("A.txt", 'a')
@@ -43,8 +47,12 @@ class PARALELL_HILL_CLIMBER:
             f.write("\nNEW RUN\n")
             fitnesses.write("\nNEW RUN\n")
             g.write("\nNEW RUN\n")
+            h.write("\nNEW RUN\n")
+            i.write("\nNEW RUN\n")
+
             
-        lowest = -1000
+            
+        lowest = -1000000000000000
         index = -1
         for parent in self.parents:
             if self.parents[parent].fitness>lowest:
@@ -53,20 +61,25 @@ class PARALELL_HILL_CLIMBER:
 
             
         g.write(f"Generation {gen} : {self.parents[index].fitness}\n")
-        g.close()
-
         
+        g.close()
+        i.write(f"Generation {gen} : {self.parents[index].height}\n")
+        i.close()
+        generationheight = 0
         generationFitness = 0
         numParents = 0
         for parent in self.parents:
+            generationheight += self.parents[parent].height
             generationFitness += self.parents[parent].fitness
             fitnesses.write(f"{self.parents[parent].fitness} \n")
             numParents +=1
         
         avgGenerationFitness = generationFitness/numParents
+        avgGenerationHeight = generationheight/numParents
             
         f.write(f"Generation {gen}: {avgGenerationFitness}\n")
         f.close()
+        h.write(f"Generation {gen}: {avgGenerationHeight}\n")
         fitnesses.close()
                 
             
